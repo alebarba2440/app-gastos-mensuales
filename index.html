@@ -2,12 +2,11 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, **viewport-fit=cover**"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"/>
   <title>Hoja de Gastos</title>
   
   <meta name="theme-color" content="#0f172a">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
   <meta name="apple-mobile-web-app-title" content="Gastos App">
@@ -97,12 +96,13 @@
     
     /* 1. HTML y BODY al 100% de altura y sin scroll */
     html, body {
-        
-      height: 100%;
-        overflow: hidden; /* Detiene el rebote de la ventana principal */
-        margin: 0; 
-        
-        /* AÑADIMOS ESTA LÍNEA para asegurar que la barra de iOS siempre tenga este color */
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        position: fixed;
+        width: 100%;
         background-color: #0f172a;
         background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
         color: var(--text);
@@ -115,11 +115,16 @@
 
     /* 2. Nuevo contenedor que envuelve todo el contenido y maneja el scroll */
     .main-wrapper {
-        padding: 20px;
-        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         overflow-y: auto;
+        overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
-        /* Por defecto, si no es iOS, el padding es 20px. */
+        overscroll-behavior: none;
+        padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
     }
 
     /* 3. El contenedor principal ya no necesita altura mínima, se adapta al scroll wrapper */
@@ -270,19 +275,11 @@
       margin-left: auto;
     }
     
-    /* PWA: Status bar para iOS (CORRECCIÓN FINAL) */
+    /* PWA: Status bar para iOS */
     @supports (-webkit-touch-callout: none) {
-      /* Aplicamos el relleno de las áreas seguras directamente al .main-wrapper */
-      .main-wrapper {
-          padding-top: calc(20px + env(safe-area-inset-top));
-          padding-bottom: calc(20px + env(safe-area-inset-bottom));
-          padding-left: calc(20px + env(safe-area-inset-left));
-          padding-right: calc(20px + env(safe-area-inset-right));
+      body {
+        background-color: #0f172a;
       }
-    }
-    /* Para navegadores que no son iOS, mantiene el padding fijo de 20px */
-    .main-wrapper:not([style*="padding-top"]) {
-        padding: 20px;
     }
     
     @media(max-width:900px){
