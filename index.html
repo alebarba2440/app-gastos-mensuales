@@ -97,6 +97,8 @@
     
     /* 1. HTML y BODY al 100% de altura y sin scroll */
     html, body {
+        padding-bottom: constant(safe-area-inset-bottom); /* Para iOS antiguos */
+        padding-bottom: env(safe-area-inset-bottom); /* Para iOS modernos */
         height: 100%;
         overflow: hidden; /* Detiene el rebote de la ventana principal */
         margin: 0; 
