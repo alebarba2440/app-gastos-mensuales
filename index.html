@@ -185,7 +185,7 @@
     .btn {padding:6px 10px;border:none;border-radius:6px;color:#fff;font-weight:bold;}
     .pagado {background:var(--success);}
     .no-pagado {background:var(--danger);}
-    .delete-btn {background:transparent;color:#f87171;border:none;font-size:1.2rem;cursor:pointer;}
+    .delete-btn {background:transparent;color:#e22828;border:none;font-size:1rem;cursor:pointer;}
     
     .ingresos-resumen {display: flex;flex-direction: column;gap: 15px;}
     .seccion {padding: 15px;border-radius: 12px;border: 1px solid var(--glass-border);}
@@ -336,18 +336,16 @@
         <div class="color-picker"><label for="color-restante">Color Restante:</label><input type="color" id="color-restante"></div>
         <div class="color-picker"><label for="color-gasto-semanal">Color Gasto Semanal:</label><input type="color" id="color-gasto-semanal"></div>
         <div class="color-picker"><label for="color-primary">Principal (Botones):</label><input type="color" id="color-primary"></div>
-        <div class="color-picker"><label for="color-success">Éxito (Pagado):</label><input type="color" id="color-success"></div>
-        <div class="color-picker"><label for="color-danger">Peligro (No Pagado):</label><input type="color" id="color-danger"></div>
+        
         <div class="color-picker"><label for="color-text">Texto Principal:</label><input type="color" id="color-text"></div>
-        <div class="color-picker"><label for="color-bg-start">Fondo (Inicio Grad.):</label><input type="color" id="color-bg-start"></div>
-        <div class="color-picker"><label for="color-bg-end">Fondo (Fin Grad.):</label><input type="color" id="color-bg-end"></div>
+        
   
         <h5>Fuentes</h5>
-        <div class="range-slider"><label for="font-size">Tamaño Fuente General:</label><input type="range" id="font-size" min="14" max="20" step="1"><span id="font-size-value"></span></div>
-        <div class="range-slider"><label for="valor-label-fs">Tamaño de Títulos:</label><input type="range" id="valor-label-fs" min="0.7" max="1.5" step="0.1"><span id="valor-label-fs-value"></span></div>
-        <div class="range-slider"><label for="ingreso-importe-fs">Tamaño Importe Ingresos:</label><input type="range" id="ingreso-importe-fs" min="0.8" max="2" step="0.1"><span id="ingreso-importe-fs-value"></span></div>
-        <div class="range-slider"><label for="restante-importe-fs">Tamaño Importe Restante:</label><input type="range" id="restante-importe-fs" min="1" max="3" step="0.1"><span id="restante-importe-fs-value"></span></div>
-        <div class="range-slider"><label for="gasto-semanal-importe-fs">Tamaño Gasto Semanal:</label><input type="range" id="gasto-semanal-importe-fs" min="1" max="3" step="0.1"><span id="gasto-semanal-importe-fs-value"></span></div>
+        <div class="range-slider"><label for="font-size">Tamaño Fuente General:</label><input type="range" id="font-size" min="10" max="20" step="1"></div>
+        <div class="range-slider"><label for="valor-label-fs">Tamaño de Títulos:</label><input type="range" id="valor-label-fs" min="0.7" max="1.5" step="0.1"></div>
+        <div class="range-slider"><label for="ingreso-importe-fs">Tamaño Importe Ingresos:</label><input type="range" id="ingreso-importe-fs" min="0.8" max="2" step="0.1"></div>
+        <div class="range-slider"><label for="restante-importe-fs">Tamaño Importe Restante:</label><input type="range" id="restante-importe-fs" min="1" max="3" step="0.1"></div>
+        <div class="range-slider"><label for="gasto-semanal-importe-fs">Tamaño Gasto Semanal:</label><input type="range" id="gasto-semanal-importe-fs" min="1" max="3" step="0.1"></div>
   
         <h5>Copia de Seguridad</h5>
         <button id="descargar-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">⬇ Backup (Descargar)</button>
