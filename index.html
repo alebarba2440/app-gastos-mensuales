@@ -95,7 +95,14 @@
     /* --- INICIO DE LA SOLUCIÓN DE SCROLL LIMITADO --- */
     
     /* 1. HTML y BODY al 100% de altura y sin scroll */
-    html, body {
+    html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #0f172a;
+    }
+    
+    body {
         height: 100vh;
         height: 100dvh;
         overflow: hidden;
@@ -278,10 +285,7 @@
     /* PWA: Status bar para iOS */
     @supports (-webkit-touch-callout: none) {
       html {
-        background: linear-gradient(135deg, #0f172a, #000000);
-      }
-      body {
-        background: transparent;
+        background-color: #0f172a;
       }
     }
     
