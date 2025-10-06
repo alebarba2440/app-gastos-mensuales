@@ -178,10 +178,26 @@
     }
     th:last-child, td:last-child {border-right:none;}
     th {background:rgba(255,255,255,0.05);}
+    
+    /* Ajuste para la fila de botones de gastos */
+    .gasto-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
     #agregar-gasto {
       background:var(--primary);border:none;color:#fff;
-      padding:8px 14px;border-radius:8px;margin-bottom:10px;
+      padding:8px 14px;border-radius:8px;
+      flex-grow: 1; /* Ocupa el espacio restante */
     }
+    #copiar-gastos {
+      background: var(--gasto-semanal-color); /* Color anaranjado */
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+    }
+    
     .btn {padding:6px 10px;border:none;border-radius:6px;color:#fff;font-weight:bold;}
     .pagado {background:var(--success);}
     .no-pagado {background:var(--danger);}
@@ -360,7 +376,12 @@
   
     <div class="container">
       <div class="card">
-        <button id="agregar-gasto">+ Agregar Gasto</button>
+        
+        <div class="gasto-actions">
+          <button id="agregar-gasto">+ Agregar Gasto</button>
+          <button id="copiar-gastos" class="btn">📋 Copiar Gastos Mes Anterior</button>
+        </div>
+        
         <table id="gastos-table">
           <thead>
             <tr><th>Gasto</th><th>Importe</th><th>Estado</th><th>Eliminar</th></tr>
@@ -373,9 +394,9 @@
         <div class="seccion seccion-ingresos">
           <h3 style="margin-top: 0; text-align: center;">Ingresos</h3>
           <div class="inputs-ingresos">
-            <div class="input-group"><label for="sueldo">Sueldo:</label><input type="text" id="sueldo" placeholder="0" inputmode="numeric"></div>
-            <div class="input-group"><label for="aguinaldo">SAC:</label><input type="text" id="aguinaldo" placeholder="0" inputmode="numeric"></div>
-            <div class="input-group"><label for="extra">Extra:</label><input type="text" id="extra" placeholder="0" inputmode="numeric"></div>
+            <div class="input-group"><label for="sueldo">Sueldo:</label><input type="text" id="sueldo" placeholder="0" inputmode="numeric" onfocus="this.select()"></div>
+            <div class="input-group"><label for="aguinaldo">SAC:</label><input type="text" id="aguinaldo" placeholder="0" inputmode="numeric" onfocus="this.select()"></div>
+            <div class="input-group"><label for="extra">Extra:</label><input type="text" id="extra" placeholder="0" inputmode="numeric" onfocus="this.select()"></div>
           </div>
         </div>
         <div class="separador"></div>
@@ -473,6 +494,7 @@
       // --- DOM ELEMENTS ---
       const mesSelect = document.getElementById('mes');
       const agregarBtn = document.getElementById('agregar-gasto');
+      const copiarBtn = document.getElementById('copiar-gastos'); // Nuevo botón
       const gastosTable = document.querySelector('#gastos-table tbody');
       const sueldoInput = document.getElementById('sueldo');
       const aguinaldoInput = document.getElementById('aguinaldo');
@@ -529,6 +551,9 @@
       // --- FUNCTIONS ---
       const formatNumber = (num) => num.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
       const parseFormattedNumber = (text) => parseInt(text.toString().replace(/\./g, '')) || 0;
+      
+      // Función para seleccionar todo el texto de un input al enfocar
+      window.selectOnFocus = (element) => element.select(); 
 
       // --- CONFIGURATION FUNCTIONS ---
       function applyConfig() {
@@ -562,63 +587,77 @@
       }
 
       // --- DATA FUNCTIONS ---
-      const copiarDelAnterior = (mes) => {
-        const idx = meses.indexOf(mes);
-        if (idx <= 0) return [];
-        const mesAnterior = meses[idx - 1];
-        if (!datos[mesAnterior] || !datos[mesAnterior].gastos || !Array.isArray(datos[mesAnterior].gastos)) {
-          return [];
+      
+      // Lógica de copiado manual (NO AUTOMÁTICO) para el botón
+      const copiarGastosDelMesAnterior = () => {
+        const idx = meses.indexOf(mesActual);
+        if (idx <= 0) {
+            alert('No hay un mes anterior para copiar gastos (Enero).');
+            return;
         }
-        return datos[mesAnterior].gastos.map(gasto => ({
-          nombre: String(gasto.nombre || 'Nuevo Gasto'),
-          importe: Number(gasto.importe) || 0,
-          pagado: false
-        }));
-      };
+        const mesAnterior = meses[idx - 1];
+        
+        // Asegura que el mes anterior tenga datos y gastos
+        if (!datos[mesAnterior] || !datos[mesAnterior].gastos || datos[mesAnterior].gastos.length === 0) {
+            alert(`El mes de ${mesAnterior} no tiene gastos para copiar.`);
+            return;
+        }
 
+        const gastosAnteriores = datos[mesAnterior].gastos.filter(g => Number(g.importe) > 0);
+
+        if (gastosAnteriores.length === 0) {
+             alert(`El mes de ${mesAnterior} no tiene gastos con importe mayor a 0 para copiar.`);
+             return;
+        }
+
+
+        if (confirm(`¿Seguro que quieres copiar los ${gastosAnteriores.length} gastos de ${mesAnterior}? Los gastos actuales del mes de ${mesActual} se MANTENDRÁN.`)) {
+            
+            const gastosActuales = datos[mesActual].gastos || [];
+            
+            // Usamos un Set para almacenar los nombres de los gastos actuales y evitar duplicados.
+            const nombresActuales = new Set(gastosActuales.map(g => g.nombre.trim()));
+            
+            // Copia los gastos del mes anterior, asegurándose de que el nombre no exista ya en el mes actual.
+            const gastosACopiar = gastosAnteriores
+              .filter(gasto => !nombresActuales.has(gasto.nombre.trim()))
+              .map(gasto => ({
+                nombre: String(gasto.nombre || 'Gasto Copiado'),
+                importe: Number(gasto.importe) || 0,
+                pagado: false // Siempre inician como no pagados al copiar
+            }));
+
+            if (gastosACopiar.length === 0) {
+                alert('No se copió ningún gasto porque todos ya existen en este mes.');
+                return;
+            }
+
+            datos[mesActual].gastos = [...gastosActuales, ...gastosACopiar];
+            
+            guardarDatos();
+            renderGastos();
+            alert(`Se copiaron ${gastosACopiar.length} gastos de ${mesAnterior}.`);
+        }
+      };
+      
+      // Función asegurarMes simplificada (sin copiado automático ni lógica de actualización)
       const asegurarMes = (mes) => {
         if (!datos[mes]) {
           datos[mes] = { 
-            gastos: copiarDelAnterior(mes),
+            gastos: [], // Inicia vacío, solo se llenará con el botón "Copiar"
             sueldo: 0,
             aguinaldo: 0,
             extra: 0
           };
-        } else {
-          const idx = meses.indexOf(mes);
-          if (idx > 0) {
-            const mesAnterior = meses[idx - 1];
-            if (datos[mesAnterior] && datos[mesAnterior].gastos && datos[mes].gastos) {
-              let hayActualizaciones = false;
-              datos[mes].gastos.forEach((gastoActual, index) => {
-                const gastoAnterior = datos[mesAnterior].gastos.find(g => g.nombre === gastoActual.nombre);
-                if (gastoAnterior && Number(gastoActual.importe) === 0 && Number(gastoAnterior.importe) > 0) {
-                  gastoActual.importe = Number(gastoAnterior.importe);
-                  hayActualizaciones = true;
-                }
-              });
-              
-             /*/ datos[mesAnterior].gastos.forEach(gastoAnterior => {
-                const existe = datos[mes].gastos.find(g => g.nombre === gastoAnterior.nombre);
-                if (!existe) {
-                  datos[mes].gastos.push({
-                    nombre: gastoAnterior.nombre,
-                    importe: Number(gastoAnterior.importe),
-                    pagado: false
-                  });
-                  hayActualizaciones = true;
-                }
-              });
-              /*/
-            }
-          }
         }
         
+        // El guardado se hace inmediatamente para que la estructura exista.
         localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
       };
 
       const guardarDatos = () => {
         if(datos[mesActual]){
+            // Usamos parseFormattedNumber para asegurar que el guardado sea un número limpio
             datos[mesActual].sueldo = parseFormattedNumber(sueldoInput.value) || 0;
             datos[mesActual].aguinaldo = parseFormattedNumber(aguinaldoInput.value) || 0;
             datos[mesActual].extra = parseFormattedNumber(extraInput.value) || 0;
@@ -644,8 +683,8 @@
           if (gasto.pagado) tr.classList.add("pagado-row");
       
           tr.innerHTML = `
-            <td><input type="text" value="${gasto.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold; height: auto; white-space: normal; word-break: break-word;" onchange="actualizarNombreGasto(${index}, this.value)"></td>
-            <td><input type="text" value="${formatNumber(gasto.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarImporteGasto(${index}, this.value)" inputmode="numeric"></td>
+            <td><input type="text" value="${gasto.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold; height: auto; white-space: normal; word-break: break-word;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
+            <td><input type="text" value="${formatNumber(gasto.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarImporteGasto(${index}, this.value)" inputmode="numeric" onfocus="this.select()"></td>
             <td><input type="checkbox" class="checkbox-pagado" ${gasto.pagado ? 'checked' : ''} onchange="togglePagado(${index})"></td>
             <td><button class="delete-btn" onclick="eliminarGasto(${index})">❌</button></td>
           `;
@@ -656,27 +695,14 @@
 
       function renderInputs() {
         if (!datos[mesActual]) return;
+        // La función formatNumber ya maneja el caso de valor nulo o cero
         sueldoInput.value = formatNumber(datos[mesActual].sueldo || 0);
         aguinaldoInput.value = formatNumber(datos[mesActual].aguinaldo || 0);
         extraInput.value = formatNumber(datos[mesActual].extra || 0);
       }
 
-      // --- EVENT HANDLERS ---
-      mesSelect.addEventListener('change', () => {
-        guardarDatos();
-        mesActual = mesSelect.value;
-        asegurarMes(mesActual);
-        renderInputs();
-        renderGastos();
-      });
-
-      agregarBtn.addEventListener('click', () => {
-        asegurarMes(mesActual);
-        datos[mesActual].gastos.push({ nombre: 'Nuevo Gasto', importe: 0, pagado: false });
-        guardarDatos();
-        renderGastos();
-      });
-
+      // --- EVENT HANDLERS GLOBALES ---
+      
       window.actualizarNombreGasto = (index, nuevoNombre) => {
         asegurarMes(mesActual);
         datos[mesActual].gastos[index].nombre = nuevoNombre;
@@ -704,6 +730,25 @@
         renderGastos();
       };
 
+      // --- EVENT HANDLERS LOCALES ---
+
+      mesSelect.addEventListener('change', () => {
+        guardarDatos();
+        mesActual = mesSelect.value;
+        asegurarMes(mesActual);
+        renderInputs();
+        renderGastos();
+      });
+
+      agregarBtn.addEventListener('click', () => {
+        asegurarMes(mesActual);
+        datos[mesActual].gastos.push({ nombre: 'Nuevo Gasto', importe: 0, pagado: false });
+        guardarDatos();
+        renderGastos();
+      });
+      
+      copiarBtn.addEventListener('click', copiarGastosDelMesAnterior); // Conexión del nuevo botón
+
       [sueldoInput, aguinaldoInput, extraInput].forEach(input => {
         input.addEventListener('input', function() {
           let value = this.value.replace(/\./g, '');
@@ -719,10 +764,9 @@
 
       descargarBtn.addEventListener('click', () => {
         const dataStr = JSON.stringify(datos);
-        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
         const exportFileDefaultName = 'gastos-backup.json';
         const linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('href', 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr));
         linkElement.setAttribute('download', exportFileDefaultName);
         linkElement.click();
       });
@@ -789,8 +833,8 @@
 
       limpiarDatosBtn.addEventListener('click', () => {
         if (confirm('¿Estás seguro de que quieres eliminar todos los datos? Esta acción no se puede deshacer.')) {
+          // Solución para forzar el borrado en sistemas como iOS
           localStorage.removeItem('gastos-mensuales');
-          // Añadir esta línea para forzar a iOS a escribir el estado vacío
           localStorage.setItem('gastos-mensuales', JSON.stringify({})); 
           datos = {};
           renderInputs();
