@@ -598,7 +598,7 @@
                 }
               });
               
-              datos[mesAnterior].gastos.forEach(gastoAnterior => {
+             /*/ datos[mesAnterior].gastos.forEach(gastoAnterior => {
                 const existe = datos[mes].gastos.find(g => g.nombre === gastoAnterior.nombre);
                 if (!existe) {
                   datos[mes].gastos.push({
@@ -609,6 +609,7 @@
                   hayActualizaciones = true;
                 }
               });
+              /*/
             }
           }
         }
@@ -789,6 +790,8 @@
       limpiarDatosBtn.addEventListener('click', () => {
         if (confirm('¿Estás seguro de que quieres eliminar todos los datos? Esta acción no se puede deshacer.')) {
           localStorage.removeItem('gastos-mensuales');
+          // Añadir esta línea para forzar a iOS a escribir el estado vacío
+          localStorage.setItem('gastos-mensuales', JSON.stringify({})); 
           datos = {};
           renderInputs();
           renderGastos();
