@@ -8,65 +8,66 @@
   <meta name="theme-color" content="#0f172a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  
   <meta name="apple-mobile-web-app-title" content="Gastos App">
   
+  <!-- Iconos -->
   <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzBmMTcyYSIgcng9IjQiLz48cGF0aCBkPSJtNyA5IDMgM0wyMCA5IiBzdHJva2U9IiNmOWZhZmIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTIxIDEydjZhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJWNmEyIDIgMCAwIDEgMi0yaDE0YTIgMiAwIDAgMSAyIDJ2NiIgc3Ryb2tlPSIjZjlmYWZiIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=">
-  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzBmMTcyYSIgcng9IjQiLz48cGF0aCBkPSJtNyA5IDMgM0wyMCA5IiBzdHJva2U9IiNmOWZhZmIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGogGKD0iTTIxIDEydjZhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJWNmEyIDIgMCAwIDEgMi0yaDE0YTIgMiAwIDAgMSAyIDJ2NiIgc3Ryb2tlPSIjZjlmYWZiIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzBmMTcyYSIgcng9IjQiLz48cGF0aCBkPSJtNyA5IDMgM0wyMCA5IiBzdHJva2U9IiNmOWZhZmIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTIxIDEydjZhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJWNmEyIDIgMCAwIDEgMi0yaDE0YTIgMiAwIDAgMSAyIDJ2NiIgc3Ryb2tlPSIjZjlmYWZiIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=">
   
-  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkdhc3RvcyBBcHAiLAogICJzaG9ydF9uYW1lIjogIkdhc3RvcyIsCiAgImRlc2NyaXB0aW9uIjogIkFwbGljYWNpw7NuIHBhcmEgZ2VzdGlvbmFyIGdhc3RvcyBtZW5zdWFsZXMiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZ-SIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgInRoZW1lX2NvbG9yIjogIiMwZjE3MmEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlNVGt5SWlCb1pXbG5hSFE5SWpFNU1pSWdkbWxsZDBKdmVEMGlNQ0F3SURJMFNUSTEELSI7CiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTlRFeUlpQm9aV2xuYUhROUlqVXhNaUlnZG1sbGQwSnZlRDBpTUNBd0lESTBTVEkwLS0tLS0tLS0tLS0tLS0tLS0tLS0iLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSIKICAgIH0KICBdCn0">
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkdhc3RvcyBBcHAiLAogICJzaG9ydF9uYW1lIjogIkdhc3RvcyIsCiAgImRlc2NyaXB0aW9uIjogIkFwbGljYWNpw7NuIHBhcmEgZ2VzdGlvbmFyIGdhc3RvcyBtZW5zdWFsZXMiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgInRoZW1lX2NvbG9yIjogIiMwZjE3MmEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlNVGt5SWlCb1pXbG5hSFE5SWpFNU1pSWdkbWxsZDBKdmVEMGlNQ0F3SURJMFNUSTEELSI7CiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTlRFeUlpQm9aV2xuYUhROUlqVXhNaUlnZG1sbGQwSnZlRDBpTUNBd0lESTBTVEkwLS0tLS0tLS0tLS0tLS0tLS0tLS0iLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSIKICAgIH0KICBdCn0">
   
+  <!-- LIBRERÍA PARA EL GRÁFICO -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     /* Columna 1: Gasto (Ocupa el espacio restante) */
-#gastos-table th:nth-child(1), 
-#gastos-table td:nth-child(1) {
-  width: auto; 
-  min-width: 120px;
-}
+    #gastos-table th:nth-child(1), 
+    #gastos-table td:nth-child(1) {
+      width: auto; 
+      min-width: 120px;
+    }
 
-/* Columna 2: Importe (Achicada a 90px) */
-#gastos-table th:nth-child(2), 
-#gastos-table td:nth-child(2) {
-  width: 110px; 
-  min-width: 110px;
-}
+    /* Columna 2: Importe (Achicada a 90px) */
+    #gastos-table th:nth-child(2), 
+    #gastos-table td:nth-child(2) {
+      width: 110px; 
+      min-width: 110px;
+    }
 
-/* Columna 3: Estado (Achicada) */
-#gastos-table th:nth-child(3), 
-#gastos-table td:nth-child(3) {
-  width: 60px;
-  min-width: 60px;
-}
+    /* Columna 3: Estado (Achicada) */
+    #gastos-table th:nth-child(3), 
+    #gastos-table td:nth-child(3) {
+      width: 60px;
+      min-width: 60px;
+    }
 
-/* Columna 4: Eliminar (Achicada) */
-#gastos-table th:nth-child(4), 
-#gastos-table td:nth-child(4) {
-  width: 60px;
-  min-width: 60px;
-}
+    /* Columna 4: Eliminar (Achicada) */
+    #gastos-table th:nth-child(4), 
+    #gastos-table td:nth-child(4) {
+      width: 60px;
+      min-width: 60px;
+    }
     
-/* --- ESTILOS DE CABECERA --- */
-/* Estilo para que el SELECT del mes sea GRANDE */
-#mes {
-    font-size: 2rem;
-    font-weight: bold;
-    padding: 4px 10px;
-    margin-right: 15px;
-    color: var(--text);
-}
+    /* --- ESTILOS DE CABECERA --- */
+    #mes {
+        font-size: 2rem;
+        font-weight: bold;
+        padding: 4px 10px;
+        margin-right: 15px;
+        color: var(--text);
+    }
 
-/* Ajuste para centrar los elementos de la cabecera */
-.header-row {
-    display:flex;
-    align-items: center; 
-    justify-content:center;
-    gap:10px;
-    margin-bottom:20px;
-    flex-wrap:wrap;
-    position:relative;
-    width: 100%;
-}
-/* ----------------------------------- */
+    .header-row {
+        display:flex;
+        align-items: center; 
+        justify-content:center;
+        gap:10px;
+        margin-bottom:20px;
+        flex-wrap:wrap;
+        position:relative;
+        width: 100%;
+    }
+    /* ----------------------------------- */
     
     :root {
       /* --- Variables de Configuración --- */
@@ -93,8 +94,6 @@
     * {box-sizing:border-box;transition:all .2s ease;}
     
     /* --- INICIO DE LA SOLUCIÓN DE SCROLL LIMITADO --- */
-    
-    /* 1. HTML y BODY al 100% de altura y sin scroll */
     html {
         height: 100%;
         margin: 0;
@@ -123,7 +122,6 @@
         -webkit-overflow-scrolling: touch;
     }
 
-    /* 2. Nuevo contenedor que envuelve todo el contenido y maneja el scroll */
     .main-wrapper {
         position: fixed;
         top: 0;
@@ -138,7 +136,6 @@
         padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
     }
 
-    /* 3. El contenedor principal ya no necesita altura mínima, se adapta al scroll wrapper */
     .container {
         display:grid;
         grid-template-columns:2fr 1fr;
@@ -146,6 +143,11 @@
         max-width:1200px;
         margin:0 auto;
         padding-bottom: 20px;
+    }
+
+    /* Si quieres que el gráfico ocupe todo el ancho abajo */
+    .full-width-card {
+      grid-column: 1 / -1;
     }
 
     /* --- FIN DE LA SOLUCIÓN DE SCROLL LIMITADO --- */
@@ -179,7 +181,6 @@
     th:last-child, td:last-child {border-right:none;}
     th {background:rgba(255,255,255,0.05);}
     
-    /* Ajuste para la fila de botones de gastos */
     .gasto-actions {
       display: flex;
       gap: 10px;
@@ -188,10 +189,10 @@
     #agregar-gasto {
       background:var(--primary);border:none;color:#fff;
       padding:8px 14px;border-radius:8px;
-      flex-grow: 1; /* Ocupa el espacio restante */
+      flex-grow: 1; 
     }
     #copiar-gastos {
-      background: var(--gasto-semanal-color); /* Color anaranjado */
+      background: var(--gasto-semanal-color);
       border: none;
       color: #fff;
       padding: 8px 14px;
@@ -267,6 +268,16 @@
       cursor: pointer;
     }
 
+    /* Estilo para el contenedor del gráfico */
+    .chart-container {
+        position: relative;
+        height: 300px; /* Altura fija para el gráfico */
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     /* PWA: Notificación de instalación */
     .install-prompt {
       position: fixed;
@@ -333,8 +344,6 @@
   <div class="main-wrapper">
     
     <div class="header-row">
-      
-  
       <select id="mes">
         <option>Enero</option><option>Febrero</option><option>Marzo</option>
         <option>Abril</option><option>Mayo</option><option>Junio</option>
@@ -355,7 +364,6 @@
         
         <div class="color-picker"><label for="color-text">Texto Principal:</label><input type="color" id="color-text"></div>
         
-  
         <h5>Fuentes</h5>
         <div class="range-slider"><label for="font-size">Tamaño Fuente General:</label><input type="range" id="font-size" min="10" max="20" step="1"></div>
         <div class="range-slider"><label for="valor-label-fs">Tamaño de Títulos:</label><input type="range" id="valor-label-fs" min="0.7" max="1.5" step="0.1"></div>
@@ -365,7 +373,7 @@
   
         <h5>Copia de Seguridad</h5>
         <button id="descargar-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">⬇ Backup (Descargar)</button>
-        <button id="subir-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">⬆ Cargar (Subir)</button>
+        <button id="subir-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">⬇ Cargar (Subir)</button>
         <input type="file" id="cargar-backup" accept="application/json" style="display:none;">
   
         <h5>Acciones</h5>
@@ -386,7 +394,7 @@
           <thead>
             <tr><th>Gasto</th><th>Importe</th><th>Estado</th><th>Eliminar</th></tr>
           </thead>
-          <tbody></>
+          <tbody></tbody>
         </table>
       </div>
       
@@ -414,9 +422,20 @@
           <div class="valor-display" id="total-por-parte"><div class="valor-label">Gasto Semanal</div><div class="valor-importe">0</div></div>
         </div>
       </div>
+
+      <!-- NUEVA SECCIÓN: GRÁFICO (Ocupa todo el ancho abajo) -->
+      <div class="card full-width-card">
+        <h3 style="text-align: center; margin-top: 0;">Distribución de Gastos</h3>
+        <div class="chart-container">
+            <canvas id="gastosChart"></canvas>
+        </div>
+      </div>
+
     </div>
     
-  </div> <script>
+  </div> 
+  
+  <script>
     // PWA: Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -457,8 +476,6 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      
-      // Mostrar prompt después de 3 segundos
       setTimeout(() => {
         if (!localStorage.getItem('pwa-install-dismissed')) {
           installPrompt.style.display = 'flex';
@@ -484,7 +501,6 @@
       localStorage.setItem('pwa-install-dismissed', 'true');
     });
 
-    // PWA: Detectar cuando se instala
     window.addEventListener('appinstalled', () => {
       console.log('PWA: App instalada exitosamente');
       installPrompt.style.display = 'none';
@@ -494,7 +510,7 @@
       // --- DOM ELEMENTS ---
       const mesSelect = document.getElementById('mes');
       const agregarBtn = document.getElementById('agregar-gasto');
-      const copiarBtn = document.getElementById('copiar-gastos'); // Nuevo botón
+      const copiarBtn = document.getElementById('copiar-gastos');
       const gastosTable = document.querySelector('#gastos-table tbody');
       const sueldoInput = document.getElementById('sueldo');
       const aguinaldoInput = document.getElementById('aguinaldo');
@@ -509,6 +525,10 @@
       const configMenu = document.getElementById('config-menu');
       const resetStylesBtn = document.getElementById('reset-styles');
       const limpiarDatosBtn = document.getElementById('limpiar-datos');
+      
+      // Chart Context
+      const ctx = document.getElementById('gastosChart').getContext('2d');
+      let gastosChart = null;
 
       // --- CONFIGURATION ELEMENTS ---
       const configInputs = {
@@ -516,25 +536,14 @@
         '--restante-color': document.getElementById('color-restante'),
         '--gasto-semanal-color': document.getElementById('color-gasto-semanal'),
         '--primary': document.getElementById('color-primary'),
-        '--success': document.getElementById('color-success'),
-        '--danger': document.getElementById('color-danger'),
         '--text': document.getElementById('color-text'),
-        '--bg-start': document.getElementById('color-bg-start'),
-        '--bg-end': document.getElementById('color-bg-end'),
         '--base-font-size': document.getElementById('font-size'),
         '--valor-label-fs': document.getElementById('valor-label-fs'),
         '--ingreso-importe-fs': document.getElementById('ingreso-importe-fs'),
         '--restante-importe-fs': document.getElementById('restante-importe-fs'),
         '--gasto-semanal-importe-fs': document.getElementById('gasto-semanal-importe-fs'),
       };
-      const configValueDisplays = {
-        '--base-font-size': document.getElementById('font-size-value'),
-        '--valor-label-fs': document.getElementById('valor-label-fs-value'),
-        '--ingreso-importe-fs': document.getElementById('ingreso-importe-fs-value'),
-        '--restante-importe-fs': document.getElementById('restante-importe-fs-value'),
-        '--gasto-semanal-importe-fs': document.getElementById('gasto-semanal-importe-fs-value'),
-      };
-
+      
       // --- APP STATE ---
       let datos = JSON.parse(localStorage.getItem('gastos-mensuales') || '{}');
       const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -543,19 +552,33 @@
 
       const defaultConfig = {
         '--ingresos-color': '#f9fafb', '--restante-color': '#22c55e', '--gasto-semanal-color': '#f59e0b',
-        '--primary': '#3b82f6', '--success': '#22c55e', '--danger': '#ef4444', '--text': '#f9fafb',
-        '--bg-start': '#0f172a', '--bg-end': '#000000', '--base-font-size': '16', 
-        '--valor-label-fs': '0.9', '--ingreso-importe-fs': '1.0', '--restante-importe-fs': '1.5', '--gasto-semanal-importe-fs': '1.5',
+        '--primary': '#3b82f6', '--text': '#f9fafb',
+        '--base-font-size': '16', '--valor-label-fs': '0.9', '--ingreso-importe-fs': '1.0', 
+        '--restante-importe-fs': '1.5', '--gasto-semanal-importe-fs': '1.5',
       };
 
       // --- FUNCTIONS ---
       const formatNumber = (num) => num.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
       const parseFormattedNumber = (text) => parseInt(text.toString().replace(/\./g, '')) || 0;
       
-      // Función para seleccionar todo el texto de un input al enfocar
+      // Función global para formatear mientras se escribe (solución punto 2)
+      window.formatearMonedaInput = (input) => {
+        let value = input.value.replace(/\./g, '');
+        if (!isNaN(value) && value !== '') {
+            // Guardamos la posición del cursor (aunque en inputs numéricos simples suele ir al final)
+            input.value = formatNumber(parseInt(value));
+        } else if (value === '') {
+            input.value = '';
+        }
+        // Disparamos el evento onchange para guardar los datos
+        const index = input.getAttribute('data-index');
+        if (index !== null) {
+            window.actualizarImporteGasto(index, input.value);
+        }
+      };
+
       window.selectOnFocus = (element) => element.select(); 
 
-      // --- CONFIGURATION FUNCTIONS ---
       function applyConfig() {
         for (const [key, value] of Object.entries(configuracion)) {
             const suffix = key.includes('fs') ? 'rem' : (key.includes('font-size') ? 'px' : '');
@@ -565,13 +588,7 @@
 
       function updateConfigUI() {
           for (const [key, input] of Object.entries(configInputs)) {
-              if (input) {
-                  input.value = configuracion[key];
-                  if (configValueDisplays[key]) {
-                      const suffix = key.includes('fs') ? 'rem' : 'px';
-                      configValueDisplays[key].textContent = `${configuracion[key]}${suffix}`;
-                  }
-              }
+              if (input) input.value = configuracion[key];
           }
       }
 
@@ -586,83 +603,68 @@
           updateConfigUI();
       }
 
-      // --- DATA FUNCTIONS ---
-      
-      // Lógica de copiado manual (NO AUTOMÁTICO) para el botón
+      // --- LOGIC MEJORADA: COPIAR GASTOS (SOLUCIÓN PUNTO 1) ---
       const copiarGastosDelMesAnterior = () => {
         const idx = meses.indexOf(mesActual);
-        if (idx <= 0) {
-            alert('No hay un mes anterior para copiar gastos (Enero).');
-            return;
+        let mesAnterior;
+
+        // Si es Enero (0), copiamos de Diciembre (11)
+        if (idx === 0) {
+            mesAnterior = meses[11];
+        } else {
+            mesAnterior = meses[idx - 1];
         }
-        const mesAnterior = meses[idx - 1];
         
-        // Asegura que el mes anterior tenga datos y gastos
         if (!datos[mesAnterior] || !datos[mesAnterior].gastos || datos[mesAnterior].gastos.length === 0) {
-            alert(`El mes de ${mesAnterior} no tiene gastos para copiar.`);
+            alert(`El mes de ${mesAnterior} no tiene gastos guardados para copiar.`);
             return;
         }
 
         const gastosAnteriores = datos[mesAnterior].gastos.filter(g => Number(g.importe) > 0);
 
         if (gastosAnteriores.length === 0) {
-             alert(`El mes de ${mesAnterior} no tiene gastos con importe mayor a 0 para copiar.`);
+             alert(`El mes de ${mesAnterior} no tiene gastos con importe mayor a 0.`);
              return;
         }
 
-
-        if (confirm(`¿Seguro que quieres copiar los ${gastosAnteriores.length} gastos de ${mesAnterior}? Los gastos actuales del mes de ${mesActual} se MANTENDRÁN.`)) {
-            
+        if (confirm(`¿Copiar ${gastosAnteriores.length} gastos de ${mesAnterior}?`)) {
             const gastosActuales = datos[mesActual].gastos || [];
-            
-            // Usamos un Set para almacenar los nombres de los gastos actuales y evitar duplicados.
             const nombresActuales = new Set(gastosActuales.map(g => g.nombre.trim()));
             
-            // Copia los gastos del mes anterior, asegurándose de que el nombre no exista ya en el mes actual.
             const gastosACopiar = gastosAnteriores
               .filter(gasto => !nombresActuales.has(gasto.nombre.trim()))
               .map(gasto => ({
                 nombre: String(gasto.nombre || 'Gasto Copiado'),
                 importe: Number(gasto.importe) || 0,
-                pagado: false // Siempre inician como no pagados al copiar
+                pagado: false 
             }));
 
             if (gastosACopiar.length === 0) {
-                alert('No se copió ningún gasto porque todos ya existen en este mes.');
+                alert('Todos los gastos ya existen en este mes.');
                 return;
             }
 
             datos[mesActual].gastos = [...gastosActuales, ...gastosACopiar];
-            
             guardarDatos();
             renderGastos();
-            alert(`Se copiaron ${gastosACopiar.length} gastos de ${mesAnterior}.`);
         }
       };
       
-      // Función asegurarMes simplificada (sin copiado automático ni lógica de actualización)
       const asegurarMes = (mes) => {
         if (!datos[mes]) {
-          datos[mes] = { 
-            gastos: [], // Inicia vacío, solo se llenará con el botón "Copiar"
-            sueldo: 0,
-            aguinaldo: 0,
-            extra: 0
-          };
+          datos[mes] = { gastos: [], sueldo: 0, aguinaldo: 0, extra: 0 };
         }
-        
-        // El guardado se hace inmediatamente para que la estructura exista.
         localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
       };
 
       const guardarDatos = () => {
         if(datos[mesActual]){
-            // Usamos parseFormattedNumber para asegurar que el guardado sea un número limpio
             datos[mesActual].sueldo = parseFormattedNumber(sueldoInput.value) || 0;
             datos[mesActual].aguinaldo = parseFormattedNumber(aguinaldoInput.value) || 0;
             datos[mesActual].extra = parseFormattedNumber(extraInput.value) || 0;
             localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
         }
+        updateChart(); // Actualizar gráfico al guardar
       };
 
       function actualizarTotales() {
@@ -673,8 +675,10 @@
         totalRestanteImporte.textContent = formatNumber(restante);
         const partes = parseInt(dividirSelect.value);
         totalPorParteImporte.textContent = formatNumber(restante / partes);
+        updateChart(); // Asegurar que el gráfico esté sincronizado
       }
 
+      // --- RENDERIZADO (Con inputs en vivo) ---
       function renderGastos() {
         gastosTable.innerHTML = '';
         if (!datos[mesActual] || !Array.isArray(datos[mesActual].gastos)) return;
@@ -684,7 +688,19 @@
       
           tr.innerHTML = `
             <td><input type="text" value="${gasto.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold; height: auto; white-space: normal; word-break: break-word;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
-            <td><input type="text" value="${formatNumber(gasto.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarImporteGasto(${index}, this.value)" inputmode="numeric" onfocus="this.select()"></td>
+            
+            <td>
+                <input 
+                    type="text" 
+                    value="${formatNumber(gasto.importe)}" 
+                    style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" 
+                    data-index="${index}"
+                    oninput="formatearMonedaInput(this)" 
+                    inputmode="numeric" 
+                    onfocus="this.select()"
+                >
+            </td>
+            
             <td><input type="checkbox" class="checkbox-pagado" ${gasto.pagado ? 'checked' : ''} onchange="togglePagado(${index})"></td>
             <td><button class="delete-btn" onclick="eliminarGasto(${index})">❌</button></td>
           `;
@@ -695,25 +711,88 @@
 
       function renderInputs() {
         if (!datos[mesActual]) return;
-        // La función formatNumber ya maneja el caso de valor nulo o cero
         sueldoInput.value = formatNumber(datos[mesActual].sueldo || 0);
         aguinaldoInput.value = formatNumber(datos[mesActual].aguinaldo || 0);
         extraInput.value = formatNumber(datos[mesActual].extra || 0);
       }
 
-      // --- EVENT HANDLERS GLOBALES ---
-      
+      // --- FUNCIÓN DEL GRÁFICO (SOLUCIÓN PUNTO 3) ---
+      function updateChart() {
+        if (!datos[mesActual]) return;
+        
+        const gastos = datos[mesActual].gastos || [];
+        // Filtramos gastos que tengan importe mayor a 0 para el gráfico
+        const gastosValidos = gastos.filter(g => g.importe > 0);
+        
+        // Preparamos los datos
+        const labels = gastosValidos.map(g => g.nombre);
+        const dataValues = gastosValidos.map(g => g.importe);
+        
+        // Generación de colores dinámicos
+        const backgroundColors = gastosValidos.map((_, i) => {
+             const hue = (i * 137.508) % 360; // Algoritmo simple para distribuir colores
+             return `hsla(${hue}, 70%, 60%, 0.7)`;
+        });
+        const borderColors = gastosValidos.map((_, i) => {
+             const hue = (i * 137.508) % 360;
+             return `hsla(${hue}, 70%, 40%, 1)`;
+        });
+
+        // Si ya existe el gráfico, lo destruimos o actualizamos
+        if (gastosChart) {
+            gastosChart.data.labels = labels;
+            gastosChart.data.datasets[0].data = dataValues;
+            gastosChart.data.datasets[0].backgroundColor = backgroundColors;
+            gastosChart.data.datasets[0].borderColor = borderColors;
+            gastosChart.update();
+        } else {
+            // Creamos el gráfico si no existe
+            gastosChart = new Chart(ctx, {
+                type: 'doughnut', // Tipo Dona
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Gastos',
+                        data: dataValues,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right', // Leyenda a la derecha
+                            labels: {
+                                color: '#f9fafb', // Color del texto
+                                boxWidth: 10,
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+      }
+
+      // --- GLOBAL HANDLERS ---
       window.actualizarNombreGasto = (index, nuevoNombre) => {
         asegurarMes(mesActual);
         datos[mesActual].gastos[index].nombre = nuevoNombre;
         guardarDatos();
+        // Solo para actualizar gráfico si cambia el nombre
+        updateChart();
       };
 
+      // Esta se llama indirectamente desde formatearMonedaInput
       window.actualizarImporteGasto = (index, nuevoImporte) => {
         asegurarMes(mesActual);
         datos[mesActual].gastos[index].importe = parseFormattedNumber(nuevoImporte);
-        guardarDatos();
-        renderGastos();
+        // Guardar sin re-renderizar toda la tabla para no perder foco
+        localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
+        actualizarTotales();
       };
 
       window.togglePagado = (index) => {
@@ -730,8 +809,7 @@
         renderGastos();
       };
 
-      // --- EVENT HANDLERS LOCALES ---
-
+      // --- EVENT HANDLERS ---
       mesSelect.addEventListener('change', () => {
         guardarDatos();
         mesActual = mesSelect.value;
@@ -742,12 +820,12 @@
 
       agregarBtn.addEventListener('click', () => {
         asegurarMes(mesActual);
-        datos[mesActual].gastos.push({ nombre: 'Nuevo Gasto', importe: 0, pagado: false });
+        datos[mesActual].gastos.push({ nombre: 'Nuevo', importe: 0, pagado: false });
         guardarDatos();
         renderGastos();
       });
       
-      copiarBtn.addEventListener('click', copiarGastosDelMesAnterior); // Conexión del nuevo botón
+      copiarBtn.addEventListener('click', copiarGastosDelMesAnterior);
 
       [sueldoInput, aguinaldoInput, extraInput].forEach(input => {
         input.addEventListener('input', function() {
@@ -764,10 +842,9 @@
 
       descargarBtn.addEventListener('click', () => {
         const dataStr = JSON.stringify(datos);
-        const exportFileDefaultName = 'gastos-backup.json';
         const linkElement = document.createElement('a');
         linkElement.setAttribute('href', 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr));
-        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.setAttribute('download', 'gastos-backup.json');
         linkElement.click();
       });
 
@@ -787,18 +864,13 @@
               renderInputs();
               renderGastos();
               alert('Datos cargados correctamente.');
-            } else {
-              alert('El archivo no contiene datos válidos.');
             }
-          } catch (error) {
-            alert('Error al leer el archivo: ' + error.message);
-          }
+          } catch (error) { alert('Error al leer el archivo'); }
         };
         reader.readAsText(file);
         this.value = '';
       });
 
-      // --- CONFIGURATION EVENT HANDLERS ---
       configBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         configMenu.classList.toggle('active');
@@ -816,10 +888,6 @@
             configuracion[key] = input.value;
             applyConfig();
             saveConfig();
-            if (configValueDisplays[key]) {
-              const suffix = key.includes('fs') ? 'rem' : 'px';
-              configValueDisplays[key].textContent = `${configuracion[key]}${suffix}`;
-            }
           });
         }
       }
@@ -832,23 +900,17 @@
       });
 
       limpiarDatosBtn.addEventListener('click', () => {
-        if (confirm('¿Estás seguro de que quieres eliminar todos los datos? Esta acción no se puede deshacer.')) {
-          // Solución para forzar el borrado en sistemas como iOS
-          localStorage.removeItem('gastos-mensuales');
+        if (confirm('¿Eliminar todos los datos?')) {
           localStorage.setItem('gastos-mensuales', JSON.stringify({})); 
           datos = {};
           renderInputs();
           renderGastos();
-          alert('Todos los datos han sido eliminados.');
         }
       });
 
-      // --- INITIALIZATION ---
+      // --- INIT ---
       const fechaActual = new Date();
-      const indiceMesActual = fechaActual.getMonth();
-
-      mesSelect.selectedIndex = indiceMesActual;
-
+      mesSelect.selectedIndex = fechaActual.getMonth();
       loadConfig();
       mesActual = mesSelect.value;
       asegurarMes(mesActual);
