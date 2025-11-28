@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Gastos App">
   
-  <!-- Iconos -->
+  <!-- Iconos (Generados en base64 para que sea un solo archivo) -->
   <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzBmMTcyYSIgcng9IjQiLz48cGF0aCBkPSJtNyA5IDMgM0wyMCA5IiBzdHJva2U9IiNmOWZhZmIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTIxIDEydjZhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJWNmEyIDIgMCAwIDEgMi0yaDE0YTIgMiAwIDAgMSAyIDJ2NiIgc3Ryb2tlPSIjZjlmYWZiIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=">
   <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzBmMTcyYSIgcng9IjQiLz48cGF0aCBkPSJtNyA5IDMgM0wyMCA5IiBzdHJva2U9IiNmOWZhZmIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTIxIDEydjZhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJWNmEyIDIgMCAwIDEgMi0yaDE0YTIgMiAwIDAgMSAyIDJ2NiIgc3Ryb2tlPSIjZjlmYWZiIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=">
   
@@ -20,57 +20,59 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* Columna 1: Gasto (Ocupa el espacio restante) */
+    /* --- CONFIGURACIÓN DE COLUMNAS DE LA TABLA --- */
     #gastos-table th:nth-child(1), 
-    #gastos-table td:nth-child(1) {
-      width: auto; 
-      min-width: 120px;
-    }
-
-    /* Columna 2: Importe (Achicada a 90px) */
+    #gastos-table td:nth-child(1) { width: auto; min-width: 120px; }
     #gastos-table th:nth-child(2), 
-    #gastos-table td:nth-child(2) {
-      width: 110px; 
-      min-width: 110px;
-    }
-
-    /* Columna 3: Estado (Achicada) */
+    #gastos-table td:nth-child(2) { width: 110px; min-width: 110px; }
     #gastos-table th:nth-child(3), 
-    #gastos-table td:nth-child(3) {
-      width: 60px;
-      min-width: 60px;
+    #gastos-table td:nth-child(3) { width: 60px; min-width: 60px; }
+    #gastos-table th:nth-child(4), 
+    #gastos-table td:nth-child(4) { width: 60px; min-width: 60px; }
+    
+    /* --- HEADER (MES Y AÑO) --- */
+    .header-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
     }
 
-    /* Columna 4: Eliminar (Achicada) */
-    #gastos-table th:nth-child(4), 
-    #gastos-table td:nth-child(4) {
-      width: 60px;
-      min-width: 60px;
+    .selector-fecha {
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 8px 15px;
+        color: var(--text);
+        text-align: center;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
     }
     
-    /* --- ESTILOS DE CABECERA --- */
-    #mes {
-        font-size: 2rem;
-        font-weight: bold;
-        padding: 4px 10px;
-        margin-right: 15px;
-        color: var(--text);
+    /* Ajustes para móviles */
+    @media(max-width: 450px) {
+        .selector-fecha {
+            font-size: 1.2rem;
+            padding: 6px 10px;
+        }
     }
 
     .header-row {
         display:flex;
         align-items: center; 
-        justify-content:center;
+        justify-content: center;
         gap:10px;
         margin-bottom:20px;
         flex-wrap:wrap;
         position:relative;
         width: 100%;
     }
-    /* ----------------------------------- */
     
     :root {
-      /* --- Variables de Configuración --- */
       --glass-bg: rgba(255,255,255,0.08);
       --glass-border: rgba(255,255,255,0.2);
       --primary: #3b82f6;
@@ -93,26 +95,12 @@
     }
     * {box-sizing:border-box;transition:all .2s ease;}
     
-    /* --- INICIO DE LA SOLUCIÓN DE SCROLL LIMITADO --- */
-    html {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        background: #000000;
-    }
+    html { height: 100%; margin: 0; padding: 0; background: #000000; }
     
     body {
-        min-height: 100vh;
-        min-height: 100dvh;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-        position: fixed;
-        width: 100%;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        min-height: 100vh; min-height: 100dvh;
+        overflow: hidden; margin: 0; padding: 0;
+        position: fixed; width: 100%; top: 0; left: 0; right: 0; bottom: 0;
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #000000 100%);
         color: var(--text);
         font-family: Segoe UI, sans-serif;
@@ -123,13 +111,8 @@
     }
 
     .main-wrapper {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow-y: auto;
-        overflow-x: hidden;
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        overflow-y: auto; overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: none;
         background: transparent;
@@ -137,20 +120,10 @@
     }
 
     .container {
-        display:grid;
-        grid-template-columns:2fr 1fr;
-        gap:20px;
-        max-width:1200px;
-        margin:0 auto;
-        padding-bottom: 20px;
+        display:grid; grid-template-columns:2fr 1fr; gap:20px;
+        max-width:1200px; margin:0 auto; padding-bottom: 20px;
     }
-
-    /* Si quieres que el gráfico ocupe todo el ancho abajo */
-    .full-width-card {
-      grid-column: 1 / -1;
-    }
-
-    /* --- FIN DE LA SOLUCIÓN DE SCROLL LIMITADO --- */
+    .full-width-card { grid-column: 1 / -1; }
 
     h1 {text-align:center;margin-bottom:10px;font-size:2rem;}
     select,input,button{
@@ -158,13 +131,12 @@
       border:1px solid var(--glass-border);
       background:var(--glass-bg);color:var(--text);
       backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-      font-weight:bold;
-      font-size: inherit;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
+      font-weight:bold; font-size: inherit;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
     }
     select option {color:#000;}
     button{cursor:pointer;}
+    
     .card {
       background:var(--glass-bg);border:1px solid var(--glass-border);
       border-radius:16px;
@@ -172,32 +144,13 @@
       box-shadow:0 8px 24px rgba(0,0,0,0.3);
     }
     table {width:100%;border-collapse:collapse;margin-top:10px;font-weight:bold;}
-    th,td {
-      padding:2px 2px;
-      border-bottom:1px solid var(--glass-border);
-      text-align:center;
-      border-right:1px solid var(--glass-border);
-    }
+    th,td { padding:2px 2px; border-bottom:1px solid var(--glass-border); text-align:center; border-right:1px solid var(--glass-border); }
     th:last-child, td:last-child {border-right:none;}
     th {background:rgba(255,255,255,0.05);}
     
-    .gasto-actions {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    #agregar-gasto {
-      background:var(--primary);border:none;color:#fff;
-      padding:8px 14px;border-radius:8px;
-      flex-grow: 1; 
-    }
-    #copiar-gastos {
-      background: var(--gasto-semanal-color);
-      border: none;
-      color: #fff;
-      padding: 8px 14px;
-      border-radius: 8px;
-    }
+    .gasto-actions { display: flex; gap: 10px; margin-bottom: 10px; }
+    #agregar-gasto { background:var(--primary);border:none;color:#fff; padding:8px 14px;border-radius:8px; flex-grow: 1; }
+    #copiar-gastos { background: var(--gasto-semanal-color); border: none; color: #fff; padding: 8px 14px; border-radius: 8px; }
     
     .btn {padding:6px 10px;border:none;border-radius:6px;color:#fff;font-weight:bold;}
     .pagado {background:var(--success);}
@@ -212,138 +165,137 @@
     .inputs-ingresos {display: flex;flex-direction: column;gap: 15px;}
     .input-group {display: flex;flex-direction: column;}
     .input-group label {margin-bottom: 5px;font-size: var(--valor-label-fs);}
-    .input-group input {
-      width: 100%;padding: 8px 12px;
-      font-size: var(--ingreso-importe-fs);
-      border-radius: 8px;border: 1px solid var(--glass-border);
-      background: rgba(0, 0, 0, 0.2);color: var(--ingresos-color);
-      -moz-appearance: textfield;
-    }
-    .input-group input::-webkit-outer-spin-button,
-    .input-group input::-webkit-inner-spin-button {-webkit-appearance: none;margin: 0;}
+    .input-group input { width: 100%;padding: 8px 12px; font-size: var(--ingreso-importe-fs); border-radius: 8px;border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.2);color: var(--ingresos-color); -moz-appearance: textfield; }
+    .input-group input::-webkit-outer-spin-button, .input-group input::-webkit-inner-spin-button {-webkit-appearance: none;margin: 0;}
     .resumen {display: flex;flex-direction: column;gap: 10px;}
     .division {display: flex;align-items: center;justify-content: space-between;gap: 10px;margin-bottom: 10px;}
-    .valor-display {
-      display: flex;flex-direction: column;align-items: center;
-      text-align: center;padding: 8px;background: rgba(0, 0, 0, 0.2);border-radius: 8px;
-    }
+    .valor-display { display: flex;flex-direction: column;align-items: center; text-align: center;padding: 8px;background: rgba(0, 0, 0, 0.2);border-radius: 8px; }
     .valor-label {font-size: var(--valor-label-fs);margin-bottom: 5px;opacity: 0.9;}
     #total-restante .valor-importe {color: var(--restante-color); font-size: var(--restante-importe-fs); font-weight: bold;}
     #total-por-parte .valor-importe {color: var(--gasto-semanal-color); font-size: var(--gasto-semanal-importe-fs); font-weight: bold;}
     .separador {height: 1px;background: var(--glass-border);margin: 10px 0;}
     
-    .config-btn {
-      background: transparent;border: 1px solid var(--glass-border);border-radius: 50%;
-      width: 40px;height: 40px;display: flex;align-items: center;justify-content: center;
-      font-size: 1.2rem;cursor: pointer;
-    }
-    .config-menu {
-      position: absolute;top: 100%;right: 0;background: var(--glass-bg);
-      border: 1px solid var(--glass-border);border-radius: 12px;padding: 15px;
-      backdrop-filter: blur(12px);-webkit-backdrop-filter:blur(12px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);z-index: 100;display: none;
-      min-width: 320px;margin-top: 10px;
-    }
-    .config-menu h4 {margin-top: 0;margin-bottom: 15px;text-align: center;}
-    .config-menu h5 {
-      margin-top: 15px;margin-bottom: 10px;border-bottom: 1px solid var(--glass-border);
-      padding-bottom: 5px;
-    }
-    .color-picker {display: flex;align-items: center;margin-bottom: 12px;gap: 10px;}
-    .color-picker label {font-size: 0.85rem;min-width: 150px;}
-    .color-picker input {width: 40px;height: 30px;padding: 0;border: none;background: transparent;}
-    .range-slider {display: flex;align-items: center;gap: 10px;margin-bottom: 12px;}
-    .range-slider label {font-size: 0.85rem;min-width: 150px;}
-    .range-slider input[type="range"] {flex-grow: 1;}
-    .range-slider span {
-      font-size: 0.8rem;background: rgba(0,0,0,0.2);padding: 2px 6px;
-      border-radius: 4px;min-width: 50px;text-align: center;
-    }
+    .config-btn { background: transparent;border: 1px solid var(--glass-border);border-radius: 50%; width: 40px;height: 40px;display: flex;align-items: center;justify-content: center; font-size: 1.2rem;cursor: pointer; }
+    .config-menu { position: absolute;top: 100%;right: 0;background: var(--glass-bg); border: 1px solid var(--glass-border);border-radius: 12px;padding: 15px; backdrop-filter: blur(20px);-webkit-backdrop-filter:blur(20px); box-shadow: 0 8px 24px rgba(0,0,0,0.5);z-index: 100;display: none; min-width: 320px;margin-top: 10px; }
     .config-menu.active {display: block;}
+    .config-menu h4 {margin: 0 0 15px 0; text-align: center;}
+    .config-menu h5 { margin: 15px 0 10px 0; border-bottom: 1px solid var(--glass-border); padding-bottom: 5px; }
+    .color-picker {display: flex;align-items: center;margin-bottom: 12px;gap: 10px;}
+    .range-slider {display: flex;align-items: center;gap: 10px;margin-bottom: 12px;}
+    .range-slider input[type="range"] {flex-grow: 1;}
     
     tr.pagado-row { background-color: rgba(34,197,94,0.3); }
-    .checkbox-pagado {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-    }
+    .checkbox-pagado { width: 18px; height: 18px; cursor: pointer; }
 
-    /* Estilo para el contenedor del gráfico */
-    .chart-container {
-        position: relative;
-        height: 300px; /* Altura fija para el gráfico */
-        width: 100%;
+    .chart-container { position: relative; height: 300px; width: 100%; display: flex; justify-content: center; align-items: center; }
+    
+    #gastos-comparacion { margin-top: 10px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+    /* --- ESTILOS DE LOS NUEVOS MODALES --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+        backdrop-filter: blur(8px); /* BLUR EN EL FONDO */
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 2000;
         display: flex;
         justify-content: center;
         align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
     }
-    
-    /* Estilo para la comparación de meses */
-    #gastos-comparacion {
-        margin-top: 10px;
-        font-weight: bold;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
     }
 
-    /* PWA: Notificación de instalación */
-    .install-prompt {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      background: var(--primary);
-      color: white;
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-      display: none;
-      align-items: center;
-      gap: 10px;
-      z-index: 1000;
+    .modal-content {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        border-radius: 20px;
+        padding: 25px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        transform: scale(0.9);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .install-prompt button {
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 0.9rem;
+    .modal-overlay.active .modal-content {
+        transform: scale(1);
     }
-    .install-prompt .close {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 1.5rem;
-      padding: 0;
-      width: 30px;
-      height: 30px;
-      margin-left: auto;
+
+    .modal-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: var(--primary);
     }
+    .modal-message {
+        margin-bottom: 25px;
+        font-weight: normal;
+        line-height: 1.5;
+        font-size: 1.1rem;
+    }
+    .modal-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    .btn-modal {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 1rem;
+        border: none;
+        color: white;
+    }
+    .btn-modal-cancel { background: #64748b; }
+    .btn-modal-confirm { background: var(--primary); }
+    .btn-modal-delete { background: var(--danger); }
     
-    /* PWA: Status bar para iOS */
-    @supports (-webkit-touch-callout: none) {
-      html {
-        background: #000000;
-      }
-      body {
-        background: linear-gradient(135deg, #0f172a 0%, #000000 100%);
-      }
-    }
+    /* PWA */
+    .install-prompt { position: fixed; bottom: 20px; left: 20px; right: 20px; background: var(--primary); color: white; padding: 15px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); display: none; align-items: center; gap: 10px; z-index: 1000; }
+    .install-prompt button { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; }
+    .install-prompt .close { background: transparent; border: none; color: white; font-size: 1.5rem; padding: 0; width: 30px; height: 30px; margin-left: auto; }
     
-    @media(max-width:900px){
-      .container{grid-template-columns:1fr;}
-      .config-menu {right: auto;left: 0;}
-    }
+    @supports (-webkit-touch-callout: none) { html { background: #000000; } body { background: linear-gradient(135deg, #0f172a 0%, #000000 100%); } }
+    @media(max-width:900px){ .container{grid-template-columns:1fr;} .config-menu {right: auto;left: 0;} }
   </style>
 </head>
 <body>
   
+  <!-- --- MODALES (HTML) --- -->
+  
+  <!-- Modal de Información (reemplaza alert) -->
+  <div id="info-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 class="modal-title" id="info-modal-title">Información</h3>
+      <p class="modal-message" id="info-modal-message">Mensaje aquí</p>
+      <div class="modal-buttons">
+        <button class="btn-modal btn-modal-confirm" id="info-modal-ok">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmación (reemplaza confirm) -->
+  <div id="confirm-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 class="modal-title" id="confirm-modal-title">Confirmar</h3>
+      <p class="modal-message" id="confirm-modal-message">¿Estás seguro?</p>
+      <div class="modal-buttons">
+        <button class="btn-modal btn-modal-cancel" id="confirm-modal-cancel">Cancelar</button>
+        <button class="btn-modal btn-modal-confirm" id="confirm-modal-yes">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- --- FIN MODALES --- -->
+
   <div class="install-prompt" id="install-prompt">
     <span>📱</span>
-    <div style="flex-grow: 1;">
-      <strong>¡Instala la App!</strong><br>
-      <small>Úsala como app nativa en tu móvil</small>
-    </div>
+    <div style="flex-grow: 1;"><strong>¡Instala la App!</strong></div>
     <button id="install-button">Instalar</button>
     <button class="close" id="install-close">×</button>
   </div>
@@ -351,67 +303,61 @@
   <div class="main-wrapper">
     
     <div class="header-row">
-      <select id="mes">
-        <option>Enero</option><option>Febrero</option><option>Marzo</option>
-        <option>Abril</option><option>Mayo</option><option>Junio</option>
-        <option>Julio</option><option>Agosto</option><option>Septiembre</option>
-        <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
-      </select>
+      <div class="header-controls">
+        <!-- SELECTOR DE MES -->
+        <select id="mes" class="selector-fecha">
+            <option>Enero</option><option>Febrero</option><option>Marzo</option>
+            <option>Abril</option><option>Mayo</option><option>Junio</option>
+            <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+            <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+        </select>
+        
+        <!-- SELECTOR DE AÑO (NUEVO) -->
+        <select id="anio" class="selector-fecha"></select>
+      </div>
       
       <button class="config-btn" id="config-btn">⚙️</button>
       
       <div class="config-menu" id="config-menu">
         <h4>Configurar Apariencia</h4>
-        
         <h5>Colores</h5>
-        <div class="color-picker"><label for="color-ingresos">Color Ingresos:</label><input type="color" id="color-ingresos"></div>
-        <div class="color-picker"><label for="color-restante">Color Restante:</label><input type="color" id="color-restante"></div>
-        <div class="color-picker"><label for="color-gasto-semanal">Color Gasto Semanal:</label><input type="color" id="color-gasto-semanal"></div>
-        <div class="color-picker"><label for="color-primary">Principal (Botones):</label><input type="color" id="color-primary"></div>
-        
-        <div class="color-picker"><label for="color-text">Texto Principal:</label><input type="color" id="color-text"></div>
+        <div class="color-picker"><label>Ingresos:</label><input type="color" id="color-ingresos"></div>
+        <div class="color-picker"><label>Restante:</label><input type="color" id="color-restante"></div>
+        <div class="color-picker"><label>Gasto Semanal:</label><input type="color" id="color-gasto-semanal"></div>
+        <div class="color-picker"><label>Principal:</label><input type="color" id="color-primary"></div>
+        <div class="color-picker"><label>Texto:</label><input type="color" id="color-text"></div>
         
         <h5>Fuentes</h5>
-        <div class="range-slider"><label for="font-size">Tamaño Fuente General:</label><input type="range" id="font-size" min="10" max="20" step="1"></div>
-        <div class="range-slider"><label for="valor-label-fs">Tamaño de Títulos:</label><input type="range" id="valor-label-fs" min="0.7" max="1.5" step="0.1"></div>
-        <div class="range-slider"><label for="ingreso-importe-fs">Tamaño Importe Ingresos:</label><input type="range" id="ingreso-importe-fs" min="0.8" max="2" step="0.1"></div>
-        <div class="range-slider"><label for="restante-importe-fs">Tamaño Importe Restante:</label><input type="range" id="restante-importe-fs" min="1" max="3" step="0.1"></div>
-        <div class="range-slider"><label for="gasto-semanal-importe-fs">Tamaño Gasto Semanal:</label><input type="range" id="gasto-semanal-importe-fs" min="1" max="3" step="0.1"></div>
-  
-        <h5>Copia de Seguridad</h5>
-        <button id="descargar-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">⬇ Backup (Descargar)</button>
-        <button id="subir-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">⬇ Cargar (Subir)</button>
+        <div class="range-slider"><label>Gral:</label><input type="range" id="font-size" min="10" max="20" step="1"></div>
+        
+        <h5>Datos</h5>
+        <button id="descargar-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">Descargar Backup</button>
+        <button id="subir-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">Cargar Backup</button>
         <input type="file" id="cargar-backup" accept="application/json" style="display:none;">
-  
-        <h5>Acciones</h5>
         <button id="reset-styles" class="btn no-pagado" style="width:100%; margin-bottom: 10px;">Restaurar Estilos</button>
-        <button id="limpiar-datos" class="btn" style="width:100%; background:#ef4444;color:#fff;">🗑️ Limpiar Todos los Datos</button>
+        <button id="limpiar-datos" class="btn" style="width:100%; background:#ef4444;">Limpiar Todo</button>
       </div>
     </div>
   
     <div class="container">
       <div class="card">
-        
         <div class="gasto-actions">
-          <button id="agregar-gasto">+ Agregar Gasto</button>
-          <button id="copiar-gastos" class="btn">📋 Copiar Gastos Mes Anterior</button>
+          <button id="agregar-gasto">+ Gasto</button>
+          <button id="copiar-gastos" class="btn">📋 Copiar Mes Ant.</button>
         </div>
-        
         <table id="gastos-table">
-          <thead>
-            <tr><th>Gasto</th><th>Importe</th><th>Estado</th><th>Eliminar</th></tr>
-          </thead>
+          <thead><tr><th>Gasto</th><th>Importe</th><th>Estado</th><th>Eliminar</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
       
       <div class="card ingresos-resumen">
         <div class="seccion seccion-ingresos">
-          <h3 style="margin-top: 0; text-align: center;">Ingresos</h3>
+          <h3 style="margin-top:0;text-align:center;">Ingresos</h3>
           <div class="inputs-ingresos">
-            <div class="input-group"><label for="sueldo">Sueldo:</label><input type="text" id="sueldo" placeholder="0" inputmode="numeric" onfocus="this.select()"></div>
-            <div class="input-group"><label for="aguinaldo">SAC:</label><input type="text" id="aguinaldo" placeholder="0" inputmode="numeric" onfocus="this.select()"></div>
-            <div class="input-group"><label for="extra">Extra:</label><input type="text" id="extra" placeholder="0" inputmode="numeric" onfocus="this.select()"></div>
+            <div class="input-group"><label>Sueldo:</label><input type="text" id="sueldo" placeholder="0" inputmode="numeric"></div>
+            <div class="input-group"><label>SAC:</label><input type="text" id="aguinaldo" placeholder="0" inputmode="numeric"></div>
+            <div class="input-group"><label>Extra:</label><input type="text" id="extra" placeholder="0" inputmode="numeric"></div>
           </div>
         </div>
         <div class="separador"></div>
@@ -422,292 +368,232 @@
         </div>
         <div class="separador"></div>
         <div class="seccion seccion-division">
-          <div class="division">
-            <label for="dividir">Dividir en:</label>
-            <select id="dividir"><option value="4">4</option><option value="5">5</option></select>
-          </div>
+          <div class="division"><label>Dividir en:</label><select id="dividir"><option value="4">4</option><option value="5">5</option></select></div>
           <div class="valor-display" id="total-por-parte"><div class="valor-label">Gasto Semanal</div><div class="valor-importe">0</div></div>
         </div>
       </div>
 
-      <!-- NUEVA SECCIÓN: GRÁFICO (Ocupa todo el ancho abajo) -->
       <div class="card full-width-card">
-        <h3 style="text-align: center; margin-top: 0;">Distribución de Gastos</h3>
-        <div class="chart-container">
-            <canvas id="gastosChart"></canvas>
-        </div>
-        <!-- Contenedor para la flechita de comparación -->
+        <h3 style="text-align:center; margin-top:0;">Estadísticas</h3>
+        <div class="chart-container"><canvas id="gastosChart"></canvas></div>
         <div id="gastos-comparacion" style="text-align:center; margin-top: 15px; font-size: 1rem;"></div>
       </div>
-
     </div>
-    
   </div> 
   
   <script>
-    // PWA: Service Worker Registration
-    if ('serviceWorker' in navigator) {
+    // --- SISTEMA DE MODALES ---
+    const modalInfo = document.getElementById('info-modal');
+    const modalConfirm = document.getElementById('confirm-modal');
+    let confirmCallback = null;
+
+    function showInfo(message, title = 'Información') {
+        document.getElementById('info-modal-title').innerText = title;
+        document.getElementById('info-modal-message').innerText = message;
+        modalInfo.classList.add('active');
+    }
+
+    document.getElementById('info-modal-ok').onclick = () => {
+        modalInfo.classList.remove('active');
+    };
+
+    function showConfirm(message, callback, title = 'Confirmar', isDelete = false) {
+        document.getElementById('confirm-modal-title').innerText = title;
+        document.getElementById('confirm-modal-message').innerText = message;
+        
+        const btnYes = document.getElementById('confirm-modal-yes');
+        
+        // Si es borrar, ponemos el botón en rojo
+        if (isDelete) {
+            btnYes.className = 'btn-modal btn-modal-delete';
+            btnYes.innerText = 'Eliminar';
+        } else {
+            btnYes.className = 'btn-modal btn-modal-confirm';
+            btnYes.innerText = 'Confirmar';
+        }
+
+        confirmCallback = callback;
+        modalConfirm.classList.add('active');
+    }
+
+    document.getElementById('confirm-modal-cancel').onclick = () => {
+        modalConfirm.classList.remove('active');
+        confirmCallback = null;
+    };
+
+    document.getElementById('confirm-modal-yes').onclick = () => {
+        modalConfirm.classList.remove('active');
+        if (confirmCallback) confirmCallback();
+    };
+
+    // --- PWA SETUP ---
+    // Verificar si SW es soportado Y si el protocolo es seguro (http/https/localhost) para evitar errores en iframes/file://
+    if ('serviceWorker' in navigator && (window.location.protocol.indexOf('http') === 0)) {
       window.addEventListener('load', () => {
         const swCode = `
-          const CACHE_NAME = 'gastos-app-v1';
-          const urlsToCache = ['./', 'data:text/css;base64,Lyo='];
-          
-          self.addEventListener('install', event => {
-            event.waitUntil(
-              caches.open(CACHE_NAME)
-                .then(cache => cache.addAll(urlsToCache))
-            );
-          });
-          
-          self.addEventListener('fetch', event => {
-            event.respondWith(
-              caches.match(event.request)
-                .then(response => response || fetch(event.request))
-            );
-          });
+          const CACHE_NAME = 'gastos-app-v2';
+          self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./']))));
+          self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
         `;
-        
         const blob = new Blob([swCode], { type: 'application/javascript' });
-        const swUrl = URL.createObjectURL(blob);
-        
-        navigator.serviceWorker.register(swUrl)
-          .then(() => console.log('PWA: Service Worker registrado'))
-          .catch(err => console.log('PWA: Error al registrar SW:', err));
+        navigator.serviceWorker.register(URL.createObjectURL(blob))
+            .catch(err => console.log('SW registration skipped (likely due to environment):', err));
       });
     }
 
-    // PWA: Install Prompt
-    let deferredPrompt;
-    const installPrompt = document.getElementById('install-prompt');
-    const installButton = document.getElementById('install-button');
-    const installClose = document.getElementById('install-close');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      setTimeout(() => {
-        if (!localStorage.getItem('pwa-install-dismissed')) {
-          installPrompt.style.display = 'flex';
-        }
-      }, 3000);
-    });
-
-    installButton.addEventListener('click', () => {
-      installPrompt.style.display = 'none';
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('PWA: App instalada');
-          }
-          deferredPrompt = null;
-        });
-      }
-    });
-
-    installClose.addEventListener('click', () => {
-      installPrompt.style.display = 'none';
-      localStorage.setItem('pwa-install-dismissed', 'true');
-    });
-
-    window.addEventListener('appinstalled', () => {
-      console.log('PWA: App instalada exitosamente');
-      installPrompt.style.display = 'none';
-    });
-
     document.addEventListener('DOMContentLoaded', () => {
-      // --- DOM ELEMENTS ---
+      // DOM Elements
       const mesSelect = document.getElementById('mes');
+      const anioSelect = document.getElementById('anio'); // Nuevo Selector
       const agregarBtn = document.getElementById('agregar-gasto');
       const copiarBtn = document.getElementById('copiar-gastos');
       const gastosTable = document.querySelector('#gastos-table tbody');
-      const sueldoInput = document.getElementById('sueldo');
-      const aguinaldoInput = document.getElementById('aguinaldo');
-      const extraInput = document.getElementById('extra');
+      const inputsIngresos = [document.getElementById('sueldo'), document.getElementById('aguinaldo'), document.getElementById('extra')];
       const totalRestanteImporte = document.querySelector('#total-restante .valor-importe');
       const dividirSelect = document.getElementById('dividir');
       const totalPorParteImporte = document.querySelector('#total-por-parte .valor-importe');
-      const descargarBtn = document.getElementById('descargar-backup');
-      const cargarInput = document.getElementById('cargar-backup');
-      const subirBtn = document.getElementById('subir-backup');
-      const configBtn = document.getElementById('config-btn');
-      const configMenu = document.getElementById('config-menu');
-      const resetStylesBtn = document.getElementById('reset-styles');
-      const limpiarDatosBtn = document.getElementById('limpiar-datos');
-      
-      // Chart Context
-      const ctx = document.getElementById('gastosChart').getContext('2d');
-      let gastosChart = null;
-
-      // --- CONFIGURATION ELEMENTS ---
       const configInputs = {
         '--ingresos-color': document.getElementById('color-ingresos'),
         '--restante-color': document.getElementById('color-restante'),
         '--gasto-semanal-color': document.getElementById('color-gasto-semanal'),
         '--primary': document.getElementById('color-primary'),
         '--text': document.getElementById('color-text'),
-        '--base-font-size': document.getElementById('font-size'),
-        '--valor-label-fs': document.getElementById('valor-label-fs'),
-        '--ingreso-importe-fs': document.getElementById('ingreso-importe-fs'),
-        '--restante-importe-fs': document.getElementById('restante-importe-fs'),
-        '--gasto-semanal-importe-fs': document.getElementById('gasto-semanal-importe-fs'),
+        '--base-font-size': document.getElementById('font-size')
       };
       
-      // --- APP STATE ---
+      const ctx = document.getElementById('gastosChart').getContext('2d');
+      let gastosChart = null;
+      
+      // Estado
       let datos = JSON.parse(localStorage.getItem('gastos-mensuales') || '{}');
       const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-      let mesActual = mesSelect.value;
-      let configuracion = {};
+      
+      // --- LOGICA AÑOS ---
+      const initYears = () => {
+          const currentYear = new Date().getFullYear();
+          // Generar rango de años (ej: 5 atrás y 5 adelante)
+          for(let y = currentYear - 5; y <= currentYear + 5; y++) {
+              const opt = document.createElement('option');
+              opt.value = y;
+              opt.text = y;
+              if (y === currentYear) opt.selected = true;
+              anioSelect.appendChild(opt);
+          }
+      };
+      initYears();
 
+      // MIGRACIÓN DE DATOS ANTIGUOS (Para no perder lo que ya tenías)
+      // Si las claves son solo "Enero", las pasamos a "Enero-202X"
+      const migrarDatos = () => {
+          let huboCambios = false;
+          const currentYear = new Date().getFullYear();
+          const nuevasKeys = {};
+          
+          Object.keys(datos).forEach(key => {
+              if (!key.includes('-')) {
+                  // Es un dato viejo sin año. Lo movemos al año actual.
+                  const newKey = `${key}-${currentYear}`;
+                  if (!datos[newKey]) {
+                      nuevasKeys[newKey] = datos[key];
+                      huboCambios = true;
+                  }
+              } else {
+                  nuevasKeys[key] = datos[key];
+              }
+          });
+          
+          if (huboCambios) {
+              datos = nuevasKeys;
+              localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
+          }
+      };
+      migrarDatos();
+
+      // Obtener la clave actual compuesta (Mes-Año)
+      const getPeriodoActual = () => `${mesSelect.value}-${anioSelect.value}`;
+
+      let configuracion = {};
       const defaultConfig = {
         '--ingresos-color': '#f9fafb', '--restante-color': '#22c55e', '--gasto-semanal-color': '#f59e0b',
-        '--primary': '#3b82f6', '--text': '#f9fafb',
-        '--base-font-size': '16', '--valor-label-fs': '0.9', '--ingreso-importe-fs': '1.0', 
-        '--restante-importe-fs': '1.5', '--gasto-semanal-importe-fs': '1.5',
+        '--primary': '#3b82f6', '--text': '#f9fafb', '--base-font-size': '16'
       };
 
-      // --- FUNCTIONS ---
       const formatNumber = (num) => num.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
       const parseFormattedNumber = (text) => parseInt(text.toString().replace(/\./g, '')) || 0;
-      
-      // Función global para formatear mientras se escribe
+
       window.formatearMonedaInput = (input) => {
         let value = input.value.replace(/\./g, '');
-        if (!isNaN(value) && value !== '') {
-            input.value = formatNumber(parseInt(value));
-        } else if (value === '') {
-            input.value = '';
-        }
+        if (!isNaN(value) && value !== '') input.value = formatNumber(parseInt(value));
+        else if (value === '') input.value = '';
         const index = input.getAttribute('data-index');
-        if (index !== null) {
-            window.actualizarImporteGasto(index, input.value);
-        }
+        if (index !== null) window.actualizarImporteGasto(index, input.value);
       };
 
-      window.selectOnFocus = (element) => element.select(); 
-
-      function applyConfig() {
-        for (const [key, value] of Object.entries(configuracion)) {
-            const suffix = key.includes('fs') ? 'rem' : (key.includes('font-size') ? 'px' : '');
-            document.documentElement.style.setProperty(key, value + suffix);
-        }
-      }
-
-      function updateConfigUI() {
-          for (const [key, input] of Object.entries(configInputs)) {
-              if (input) input.value = configuracion[key];
-          }
-      }
-
-      function saveConfig() {
-          localStorage.setItem('app-config', JSON.stringify(configuracion));
-      }
-
-      function loadConfig() {
-          const savedConfig = JSON.parse(localStorage.getItem('app-config') || '{}');
-          configuracion = { ...defaultConfig, ...savedConfig };
-          applyConfig();
-          updateConfigUI();
-      }
-
-      // --- LOGIC MEJORADA: COPIAR GASTOS ---
-      const copiarGastosDelMesAnterior = () => {
-        const idx = meses.indexOf(mesActual);
-        let mesAnterior;
-
-        if (idx === 0) {
-            mesAnterior = meses[11];
-        } else {
-            mesAnterior = meses[idx - 1];
-        }
-        
-        if (!datos[mesAnterior] || !datos[mesAnterior].gastos || datos[mesAnterior].gastos.length === 0) {
-            alert(`El mes de ${mesAnterior} no tiene gastos guardados para copiar.`);
-            return;
-        }
-
-        const gastosAnteriores = datos[mesAnterior].gastos.filter(g => Number(g.importe) > 0);
-
-        if (gastosAnteriores.length === 0) {
-             alert(`El mes de ${mesAnterior} no tiene gastos con importe mayor a 0.`);
-             return;
-        }
-
-        if (confirm(`¿Copiar ${gastosAnteriores.length} gastos de ${mesAnterior}?`)) {
-            const gastosActuales = datos[mesActual].gastos || [];
-            const nombresActuales = new Set(gastosActuales.map(g => g.nombre.trim()));
-            
-            const gastosACopiar = gastosAnteriores
-              .filter(gasto => !nombresActuales.has(gasto.nombre.trim()))
-              .map(gasto => ({
-                nombre: String(gasto.nombre || 'Gasto Copiado'),
-                importe: Number(gasto.importe) || 0,
-                pagado: false 
-            }));
-
-            if (gastosACopiar.length === 0) {
-                alert('Todos los gastos ya existen en este mes.');
-                return;
-            }
-
-            datos[mesActual].gastos = [...gastosActuales, ...gastosACopiar];
-            guardarDatos();
-            renderGastos();
-        }
-      };
+      // --- FUNCIONES PRINCIPALES ---
       
-      const asegurarMes = (mes) => {
-        if (!datos[mes]) {
-          datos[mes] = { gastos: [], sueldo: 0, aguinaldo: 0, extra: 0 };
+      const asegurarMes = () => {
+        const periodo = getPeriodoActual();
+        if (!datos[periodo]) {
+          datos[periodo] = { gastos: [], sueldo: 0, aguinaldo: 0, extra: 0 };
         }
         localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
       };
 
       const guardarDatos = () => {
-        if(datos[mesActual]){
-            datos[mesActual].sueldo = parseFormattedNumber(sueldoInput.value) || 0;
-            datos[mesActual].aguinaldo = parseFormattedNumber(aguinaldoInput.value) || 0;
-            datos[mesActual].extra = parseFormattedNumber(extraInput.value) || 0;
+        const periodo = getPeriodoActual();
+        if(datos[periodo]){
+            datos[periodo].sueldo = parseFormattedNumber(inputsIngresos[0].value) || 0;
+            datos[periodo].aguinaldo = parseFormattedNumber(inputsIngresos[1].value) || 0;
+            datos[periodo].extra = parseFormattedNumber(inputsIngresos[2].value) || 0;
             localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
         }
         updateChart(); 
-        actualizarComparacion(); // Actualizar comparación al guardar
+        actualizarComparacion();
       };
 
-      // --- NUEVA LÓGICA: COMPARACIÓN DE GASTOS MES ANTERIOR ---
+      // --- LÓGICA DE COMPARACIÓN MEJORADA (FLECHAS) ---
       function actualizarComparacion() {
+        const mesActual = mesSelect.value;
+        const anioActual = parseInt(anioSelect.value);
         const idx = meses.indexOf(mesActual);
-        let mesAnterior = (idx === 0) ? meses[11] : meses[idx - 1];
         
-        // Calcular total actual
-        const gastosActuales = datos[mesActual]?.gastos || [];
-        const totalActual = gastosActuales.reduce((acc, g) => acc + (Number(g.importe) || 0), 0);
+        let mesAnterior, anioAnterior;
+        
+        if (idx === 0) { // Si es Enero
+            mesAnterior = meses[11]; // Diciembre
+            anioAnterior = anioActual - 1; // Año anterior
+        } else {
+            mesAnterior = meses[idx - 1];
+            anioAnterior = anioActual;
+        }
 
-        // Calcular total anterior
-        const gastosAnteriores = datos[mesAnterior]?.gastos || [];
-        const totalAnterior = gastosAnteriores.reduce((acc, g) => acc + (Number(g.importe) || 0), 0);
+        const periodoActual = `${mesActual}-${anioActual}`;
+        const periodoAnterior = `${mesAnterior}-${anioAnterior}`;
+
+        const totalActual = (datos[periodoActual]?.gastos || []).reduce((acc, g) => acc + (Number(g.importe) || 0), 0);
+        const totalAnterior = (datos[periodoAnterior]?.gastos || []).reduce((acc, g) => acc + (Number(g.importe) || 0), 0);
         
         const divComparacion = document.getElementById('gastos-comparacion');
         
-        // Si no hay datos anteriores
-        if (totalAnterior === 0 && gastosAnteriores.length === 0) {
-            divComparacion.innerHTML = '<span style="color: rgba(255,255,255,0.5)">Sin datos del mes anterior para comparar</span>';
+        if (!datos[periodoAnterior] || (totalAnterior === 0 && datos[periodoAnterior].gastos.length === 0)) {
+            divComparacion.innerHTML = '<span style="color: rgba(255,255,255,0.5)">Sin datos previos</span>';
             return;
         }
 
         const diferencia = totalActual - totalAnterior;
         
+        // LÓGICA DE COLORES DE FLECHAS PEDIDA
+        // Flecha arriba (Subió gasto) -> Rojo
+        // Flecha abajo (Bajó gasto) -> Verde
         if (diferencia > 0) {
-            // Gasto subió (Malo - Rojo)
             divComparacion.innerHTML = `
-                <span style="color: var(--danger); display: flex; align-items: center; justify-content: center; gap: 5px;">
-                    ⬆️ $${formatNumber(diferencia)} más que en ${mesAnterior}
+                <span style="color: #ef4444; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                    <span style="font-size: 1.2em;">⬆</span> $${formatNumber(diferencia)} más que en ${mesAnterior}
                 </span>`;
         } else if (diferencia < 0) {
-            // Gasto bajó (Bueno - Verde)
             divComparacion.innerHTML = `
-                <span style="color: var(--success); display: flex; align-items: center; justify-content: center; gap: 5px;">
-                    ⬇️ $${formatNumber(Math.abs(diferencia))} menos que en ${mesAnterior}
+                <span style="color: #22c55e; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                    <span style="font-size: 1.2em;">⬇</span> $${formatNumber(Math.abs(diferencia))} menos que en ${mesAnterior}
                 </span>`;
         } else {
             divComparacion.innerHTML = '<span style="color: var(--text)">Igual que el mes anterior</span>';
@@ -715,7 +601,8 @@
       }
 
       function actualizarTotales() {
-        const { sueldo = 0, aguinaldo = 0, extra = 0, gastos = [] } = datos[mesActual] || {};
+        const periodo = getPeriodoActual();
+        const { sueldo = 0, aguinaldo = 0, extra = 0, gastos = [] } = datos[periodo] || {};
         const ingresos = Number(sueldo) + Number(aguinaldo) + Number(extra);
         const totalGastos = gastos.reduce((a, g) => a + (Number(g.importe) || 0), 0);
         const restante = ingresos - totalGastos;
@@ -723,32 +610,20 @@
         const partes = parseInt(dividirSelect.value);
         totalPorParteImporte.textContent = formatNumber(restante / partes);
         updateChart(); 
-        actualizarComparacion(); // Actualizar comparación al cambiar totales
+        actualizarComparacion();
       }
 
-      // --- RENDERIZADO (Con inputs en vivo) ---
       function renderGastos() {
         gastosTable.innerHTML = '';
-        if (!datos[mesActual] || !Array.isArray(datos[mesActual].gastos)) return;
-        datos[mesActual].gastos.forEach((gasto, index) => {
+        const periodo = getPeriodoActual();
+        if (!datos[periodo] || !Array.isArray(datos[periodo].gastos)) return;
+        
+        datos[periodo].gastos.forEach((gasto, index) => {
           const tr = document.createElement('tr');
           if (gasto.pagado) tr.classList.add("pagado-row");
-      
           tr.innerHTML = `
-            <td><input type="text" value="${gasto.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold; height: auto; white-space: normal; word-break: break-word;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
-            
-            <td>
-                <input 
-                    type="text" 
-                    value="${formatNumber(gasto.importe)}" 
-                    style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" 
-                    data-index="${index}"
-                    oninput="formatearMonedaInput(this)" 
-                    inputmode="numeric" 
-                    onfocus="this.select()"
-                >
-            </td>
-            
+            <td><input type="text" value="${gasto.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
+            <td><input type="text" value="${formatNumber(gasto.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" data-index="${index}" oninput="formatearMonedaInput(this)" inputmode="numeric" onfocus="this.select()"></td>
             <td><input type="checkbox" class="checkbox-pagado" ${gasto.pagado ? 'checked' : ''} onchange="togglePagado(${index})"></td>
             <td><button class="delete-btn" onclick="eliminarGasto(${index})">❌</button></td>
           `;
@@ -758,37 +633,24 @@
       }
 
       function renderInputs() {
-        if (!datos[mesActual]) return;
-        sueldoInput.value = formatNumber(datos[mesActual].sueldo || 0);
-        aguinaldoInput.value = formatNumber(datos[mesActual].aguinaldo || 0);
-        extraInput.value = formatNumber(datos[mesActual].extra || 0);
+        const periodo = getPeriodoActual();
+        if (!datos[periodo]) return;
+        inputsIngresos[0].value = formatNumber(datos[periodo].sueldo || 0);
+        inputsIngresos[1].value = formatNumber(datos[periodo].aguinaldo || 0);
+        inputsIngresos[2].value = formatNumber(datos[periodo].extra || 0);
       }
 
-      // --- FUNCIÓN DEL GRÁFICO (ORDENADO MAYOR A MENOR) ---
       function updateChart() {
-        if (!datos[mesActual]) return;
+        const periodo = getPeriodoActual();
+        if (!datos[periodo]) return;
+        const gastos = datos[periodo].gastos || [];
+        const gastosValidos = gastos.filter(g => g.importe > 0).sort((a, b) => b.importe - a.importe);
         
-        const gastos = datos[mesActual].gastos || [];
-        // Filtramos gastos > 0 Y ordenamos de mayor a menor
-        const gastosValidos = gastos
-            .filter(g => g.importe > 0)
-            .sort((a, b) => b.importe - a.importe); // Ordenamiento descendente
-        
-        // Preparamos los datos
         const labels = gastosValidos.map(g => g.nombre);
         const dataValues = gastosValidos.map(g => g.importe);
-        
-        // Generación de colores dinámicos
-        const backgroundColors = gastosValidos.map((_, i) => {
-             const hue = (i * 137.508) % 360; 
-             return `hsla(${hue}, 70%, 60%, 0.7)`;
-        });
-        const borderColors = gastosValidos.map((_, i) => {
-             const hue = (i * 137.508) % 360;
-             return `hsla(${hue}, 70%, 40%, 1)`;
-        });
+        const backgroundColors = gastosValidos.map((_, i) => `hsla(${(i * 137.5) % 360}, 70%, 60%, 0.7)`);
+        const borderColors = gastosValidos.map((_, i) => `hsla(${(i * 137.5) % 360}, 70%, 40%, 1)`);
 
-        // Si ya existe el gráfico, lo destruimos o actualizamos
         if (gastosChart) {
             gastosChart.data.labels = labels;
             gastosChart.data.datasets[0].data = dataValues;
@@ -796,175 +658,173 @@
             gastosChart.data.datasets[0].borderColor = borderColors;
             gastosChart.update();
         } else {
-            // Creamos el gráfico si no existe
             gastosChart = new Chart(ctx, {
                 type: 'doughnut', 
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Gastos',
-                        data: dataValues,
-                        backgroundColor: backgroundColors,
-                        borderColor: borderColors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right', // Leyenda a la derecha
-                            labels: {
-                                color: '#f9fafb', // Color del texto
-                                boxWidth: 10,
-                                font: { size: 10 }
-                            }
-                        }
-                    }
-                }
+                data: { labels, datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderColor: borderColors, borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#f9fafb', boxWidth: 10, font: { size: 10 } } } } }
             });
         }
       }
 
-      // --- GLOBAL HANDLERS ---
-      window.actualizarNombreGasto = (index, nuevoNombre) => {
-        asegurarMes(mesActual);
-        datos[mesActual].gastos[index].nombre = nuevoNombre;
+      // --- FUNCIONES GLOBALES CON MODALES ---
+      window.actualizarNombreGasto = (index, val) => {
+        const p = getPeriodoActual();
+        datos[p].gastos[index].nombre = val;
         guardarDatos();
-        updateChart();
       };
-
-      // Esta se llama indirectamente desde formatearMonedaInput
-      window.actualizarImporteGasto = (index, nuevoImporte) => {
-        asegurarMes(mesActual);
-        datos[mesActual].gastos[index].importe = parseFormattedNumber(nuevoImporte);
+      
+      window.actualizarImporteGasto = (index, val) => {
+        const p = getPeriodoActual();
+        datos[p].gastos[index].importe = parseFormattedNumber(val);
         localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
         actualizarTotales();
       };
 
       window.togglePagado = (index) => {
-        asegurarMes(mesActual);
-        datos[mesActual].gastos[index].pagado = !datos[mesActual].gastos[index].pagado;
+        const p = getPeriodoActual();
+        datos[p].gastos[index].pagado = !datos[p].gastos[index].pagado;
         guardarDatos();
         renderGastos();
       };
 
+      // MODAL CONFIRMACIÓN AL ELIMINAR
       window.eliminarGasto = (index) => {
-        asegurarMes(mesActual);
-        datos[mesActual].gastos.splice(index, 1);
-        guardarDatos();
-        renderGastos();
+        showConfirm(
+            '¿Estás de acuerdo en eliminar este gasto?',
+            () => {
+                const p = getPeriodoActual();
+                datos[p].gastos.splice(index, 1);
+                guardarDatos();
+                renderGastos();
+            },
+            'Eliminar Gasto',
+            true // Esto pone el botón en rojo
+        );
       };
 
-      // --- EVENT HANDLERS ---
-      mesSelect.addEventListener('change', () => {
-        guardarDatos();
-        mesActual = mesSelect.value;
-        asegurarMes(mesActual);
-        renderInputs();
-        renderGastos();
-      });
-
-      agregarBtn.addEventListener('click', () => {
-        asegurarMes(mesActual);
-        datos[mesActual].gastos.push({ nombre: 'Nuevo', importe: 0, pagado: false });
-        guardarDatos();
-        renderGastos();
-      });
+      // --- EVENT LISTENERS ---
       
-      copiarBtn.addEventListener('click', copiarGastosDelMesAnterior);
-
-      [sueldoInput, aguinaldoInput, extraInput].forEach(input => {
-        input.addEventListener('input', function() {
-          let value = this.value.replace(/\./g, '');
-          if (!isNaN(value) && value !== '') {
-            this.value = formatNumber(parseInt(value));
-          }
-          guardarDatos();
-          actualizarTotales();
-        });
-      });
-
-      dividirSelect.addEventListener('change', actualizarTotales);
-
-      descargarBtn.addEventListener('click', () => {
-        const dataStr = JSON.stringify(datos);
-        const linkElement = document.createElement('a');
-        linkElement.setAttribute('href', 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr));
-        linkElement.setAttribute('download', 'gastos-backup.json');
-        linkElement.click();
-      });
-
-      subirBtn.addEventListener('click', () => cargarInput.click());
-
-      cargarInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          try {
-            const contenido = JSON.parse(e.target.result);
-            if (typeof contenido === 'object' && contenido !== null) {
-              datos = contenido;
-              localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
-              asegurarMes(mesActual);
-              renderInputs();
-              renderGastos();
-              alert('Datos cargados correctamente.');
-            }
-          } catch (error) { alert('Error al leer el archivo'); }
-        };
-        reader.readAsText(file);
-        this.value = '';
-      });
-
-      configBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        configMenu.classList.toggle('active');
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!configBtn.contains(e.target) && !configMenu.contains(e.target)) {
-          configMenu.classList.remove('active');
-        }
-      });
-
-      for (const [key, input] of Object.entries(configInputs)) {
-        if (input) {
-          input.addEventListener('input', () => {
-            configuracion[key] = input.value;
-            applyConfig();
-            saveConfig();
-          });
-        }
-      }
-
-      resetStylesBtn.addEventListener('click', () => {
-        configuracion = { ...defaultConfig };
-        applyConfig();
-        saveConfig();
-        updateConfigUI();
-      });
-
-      limpiarDatosBtn.addEventListener('click', () => {
-        if (confirm('¿Eliminar todos los datos?')) {
-          localStorage.setItem('gastos-mensuales', JSON.stringify({})); 
-          datos = {};
+      // Cambio de fecha
+      const handleDateChange = () => {
+          asegurarMes();
           renderInputs();
           renderGastos();
+          guardarDatos();
+      };
+      mesSelect.addEventListener('change', handleDateChange);
+      anioSelect.addEventListener('change', handleDateChange);
+
+      agregarBtn.addEventListener('click', () => {
+        asegurarMes();
+        const p = getPeriodoActual();
+        datos[p].gastos.push({ nombre: 'Nuevo', importe: 0, pagado: false });
+        guardarDatos();
+        renderGastos();
+      });
+      
+      copiarBtn.addEventListener('click', () => {
+        const mesActual = mesSelect.value;
+        const anioActual = parseInt(anioSelect.value);
+        const idx = meses.indexOf(mesActual);
+        
+        let mesAnterior, anioAnterior;
+        if (idx === 0) { mesAnterior = meses[11]; anioAnterior = anioActual - 1; }
+        else { mesAnterior = meses[idx - 1]; anioAnterior = anioActual; }
+        
+        const keyAnterior = `${mesAnterior}-${anioAnterior}`;
+        
+        if (!datos[keyAnterior] || !datos[keyAnterior].gastos?.length) {
+            showInfo(`No hay datos en ${mesAnterior} ${anioAnterior} para copiar.`);
+            return;
         }
+
+        showConfirm(`¿Copiar gastos de ${mesAnterior} ${anioAnterior}?`, () => {
+            const p = getPeriodoActual();
+            const actuales = new Set(datos[p].gastos.map(g => g.nombre));
+            const nuevos = datos[keyAnterior].gastos
+                .filter(g => g.importe > 0 && !actuales.has(g.nombre))
+                .map(g => ({ ...g, pagado: false }));
+            
+            if(nuevos.length === 0) {
+                showInfo("Todos los gastos ya existen en este mes.");
+                return;
+            }
+            datos[p].gastos.push(...nuevos);
+            guardarDatos();
+            renderGastos();
+        }, "Copiar Gastos");
       });
 
-      // --- INIT ---
-      const fechaActual = new Date();
-      mesSelect.selectedIndex = fechaActual.getMonth();
+      // Configuración y Backup
+      document.getElementById('config-btn').onclick = (e) => { e.stopPropagation(); document.getElementById('config-menu').classList.toggle('active'); };
+      document.addEventListener('click', (e) => { 
+        if (!e.target.closest('#config-menu') && !e.target.closest('#config-btn')) document.getElementById('config-menu').classList.remove('active'); 
+      });
+
+      document.getElementById('descargar-backup').onclick = () => {
+        const a = document.createElement('a');
+        a.href = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(datos));
+        a.download = `gastos-backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+      };
+      
+      document.getElementById('subir-backup').onclick = () => document.getElementById('cargar-backup').click();
+      document.getElementById('cargar-backup').onchange = (e) => {
+         const r = new FileReader();
+         r.onload = (ev) => {
+             try {
+                 datos = JSON.parse(ev.target.result);
+                 migrarDatos(); // Por si suben un backup viejo
+                 localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
+                 asegurarMes();
+                 renderInputs();
+                 renderGastos();
+                 showInfo('Backup cargado correctamente');
+             } catch(err) { showInfo('Error al leer el archivo'); }
+         };
+         if(e.target.files[0]) r.readAsText(e.target.files[0]);
+         e.target.value = '';
+      };
+
+      document.getElementById('limpiar-datos').onclick = () => {
+          showConfirm('¿Eliminar TODOS los datos de la app? No se pueden recuperar.', () => {
+              datos = {};
+              localStorage.setItem('gastos-mensuales', JSON.stringify({}));
+              asegurarMes();
+              renderInputs();
+              renderGastos();
+          }, 'Atención', true);
+      };
+
+      // Configuración de Estilos
+      const applyConfig = () => {
+        Object.entries(configuracion).forEach(([k, v]) => {
+           const suffix = k.includes('font-size') ? 'px' : '';
+           document.documentElement.style.setProperty(k, v + suffix);
+        });
+      };
+      const loadConfig = () => {
+          configuracion = { ...defaultConfig, ...JSON.parse(localStorage.getItem('app-config') || '{}') };
+          applyConfig();
+          Object.entries(configInputs).forEach(([k, el]) => { if(el) el.value = configuracion[k]; });
+      };
+      Object.entries(configInputs).forEach(([k, el]) => {
+         if(el) el.oninput = () => { configuracion[k] = el.value; applyConfig(); localStorage.setItem('app-config', JSON.stringify(configuracion)); };
+      });
+      document.getElementById('reset-styles').onclick = () => {
+          localStorage.removeItem('app-config');
+          loadConfig();
+      };
+
+      inputsIngresos.forEach(i => i.addEventListener('input', () => { window.formatearMonedaInput(i); guardarDatos(); }));
+      dividirSelect.addEventListener('change', actualizarTotales);
+
+      // INIT
+      mesSelect.selectedIndex = new Date().getMonth();
       loadConfig();
-      mesActual = mesSelect.value;
-      asegurarMes(mesActual);
+      asegurarMes();
       renderInputs();
       renderGastos();
-      
     });
   </script>
 </body>
