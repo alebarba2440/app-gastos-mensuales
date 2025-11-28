@@ -277,6 +277,13 @@
         justify-content: center;
         align-items: center;
     }
+    
+    /* Estilo para la comparación de meses */
+    #gastos-comparacion {
+        margin-top: 10px;
+        font-weight: bold;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
 
     /* PWA: Notificación de instalación */
     .install-prompt {
@@ -429,6 +436,8 @@
         <div class="chart-container">
             <canvas id="gastosChart"></canvas>
         </div>
+        <!-- Contenedor para la flechita de comparación -->
+        <div id="gastos-comparacion" style="text-align:center; margin-top: 15px; font-size: 1rem;"></div>
       </div>
 
     </div>
@@ -561,16 +570,14 @@
       const formatNumber = (num) => num.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
       const parseFormattedNumber = (text) => parseInt(text.toString().replace(/\./g, '')) || 0;
       
-      // Función global para formatear mientras se escribe (solución punto 2)
+      // Función global para formatear mientras se escribe
       window.formatearMonedaInput = (input) => {
         let value = input.value.replace(/\./g, '');
         if (!isNaN(value) && value !== '') {
-            // Guardamos la posición del cursor (aunque en inputs numéricos simples suele ir al final)
             input.value = formatNumber(parseInt(value));
         } else if (value === '') {
             input.value = '';
         }
-        // Disparamos el evento onchange para guardar los datos
         const index = input.getAttribute('data-index');
         if (index !== null) {
             window.actualizarImporteGasto(index, input.value);
@@ -603,12 +610,11 @@
           updateConfigUI();
       }
 
-      // --- LOGIC MEJORADA: COPIAR GASTOS (SOLUCIÓN PUNTO 1) ---
+      // --- LOGIC MEJORADA: COPIAR GASTOS ---
       const copiarGastosDelMesAnterior = () => {
         const idx = meses.indexOf(mesActual);
         let mesAnterior;
 
-        // Si es Enero (0), copiamos de Diciembre (11)
         if (idx === 0) {
             mesAnterior = meses[11];
         } else {
@@ -664,8 +670,49 @@
             datos[mesActual].extra = parseFormattedNumber(extraInput.value) || 0;
             localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
         }
-        updateChart(); // Actualizar gráfico al guardar
+        updateChart(); 
+        actualizarComparacion(); // Actualizar comparación al guardar
       };
+
+      // --- NUEVA LÓGICA: COMPARACIÓN DE GASTOS MES ANTERIOR ---
+      function actualizarComparacion() {
+        const idx = meses.indexOf(mesActual);
+        let mesAnterior = (idx === 0) ? meses[11] : meses[idx - 1];
+        
+        // Calcular total actual
+        const gastosActuales = datos[mesActual]?.gastos || [];
+        const totalActual = gastosActuales.reduce((acc, g) => acc + (Number(g.importe) || 0), 0);
+
+        // Calcular total anterior
+        const gastosAnteriores = datos[mesAnterior]?.gastos || [];
+        const totalAnterior = gastosAnteriores.reduce((acc, g) => acc + (Number(g.importe) || 0), 0);
+        
+        const divComparacion = document.getElementById('gastos-comparacion');
+        
+        // Si no hay datos anteriores
+        if (totalAnterior === 0 && gastosAnteriores.length === 0) {
+            divComparacion.innerHTML = '<span style="color: rgba(255,255,255,0.5)">Sin datos del mes anterior para comparar</span>';
+            return;
+        }
+
+        const diferencia = totalActual - totalAnterior;
+        
+        if (diferencia > 0) {
+            // Gasto subió (Malo - Rojo)
+            divComparacion.innerHTML = `
+                <span style="color: var(--danger); display: flex; align-items: center; justify-content: center; gap: 5px;">
+                    ⬆️ $${formatNumber(diferencia)} más que en ${mesAnterior}
+                </span>`;
+        } else if (diferencia < 0) {
+            // Gasto bajó (Bueno - Verde)
+            divComparacion.innerHTML = `
+                <span style="color: var(--success); display: flex; align-items: center; justify-content: center; gap: 5px;">
+                    ⬇️ $${formatNumber(Math.abs(diferencia))} menos que en ${mesAnterior}
+                </span>`;
+        } else {
+            divComparacion.innerHTML = '<span style="color: var(--text)">Igual que el mes anterior</span>';
+        }
+      }
 
       function actualizarTotales() {
         const { sueldo = 0, aguinaldo = 0, extra = 0, gastos = [] } = datos[mesActual] || {};
@@ -675,7 +722,8 @@
         totalRestanteImporte.textContent = formatNumber(restante);
         const partes = parseInt(dividirSelect.value);
         totalPorParteImporte.textContent = formatNumber(restante / partes);
-        updateChart(); // Asegurar que el gráfico esté sincronizado
+        updateChart(); 
+        actualizarComparacion(); // Actualizar comparación al cambiar totales
       }
 
       // --- RENDERIZADO (Con inputs en vivo) ---
@@ -716,13 +764,15 @@
         extraInput.value = formatNumber(datos[mesActual].extra || 0);
       }
 
-      // --- FUNCIÓN DEL GRÁFICO (SOLUCIÓN PUNTO 3) ---
+      // --- FUNCIÓN DEL GRÁFICO (ORDENADO MAYOR A MENOR) ---
       function updateChart() {
         if (!datos[mesActual]) return;
         
         const gastos = datos[mesActual].gastos || [];
-        // Filtramos gastos que tengan importe mayor a 0 para el gráfico
-        const gastosValidos = gastos.filter(g => g.importe > 0);
+        // Filtramos gastos > 0 Y ordenamos de mayor a menor
+        const gastosValidos = gastos
+            .filter(g => g.importe > 0)
+            .sort((a, b) => b.importe - a.importe); // Ordenamiento descendente
         
         // Preparamos los datos
         const labels = gastosValidos.map(g => g.nombre);
@@ -730,7 +780,7 @@
         
         // Generación de colores dinámicos
         const backgroundColors = gastosValidos.map((_, i) => {
-             const hue = (i * 137.508) % 360; // Algoritmo simple para distribuir colores
+             const hue = (i * 137.508) % 360; 
              return `hsla(${hue}, 70%, 60%, 0.7)`;
         });
         const borderColors = gastosValidos.map((_, i) => {
@@ -748,7 +798,7 @@
         } else {
             // Creamos el gráfico si no existe
             gastosChart = new Chart(ctx, {
-                type: 'doughnut', // Tipo Dona
+                type: 'doughnut', 
                 data: {
                     labels: labels,
                     datasets: [{
@@ -782,7 +832,6 @@
         asegurarMes(mesActual);
         datos[mesActual].gastos[index].nombre = nuevoNombre;
         guardarDatos();
-        // Solo para actualizar gráfico si cambia el nombre
         updateChart();
       };
 
@@ -790,7 +839,6 @@
       window.actualizarImporteGasto = (index, nuevoImporte) => {
         asegurarMes(mesActual);
         datos[mesActual].gastos[index].importe = parseFormattedNumber(nuevoImporte);
-        // Guardar sin re-renderizar toda la tabla para no perder foco
         localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
         actualizarTotales();
       };
