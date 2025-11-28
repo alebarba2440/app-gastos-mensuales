@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Gastos App">
   
-  <!-- Iconos (Generados en base64 para que sea un solo archivo) -->
+  <!-- Iconos -->
   <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzBmMTcyYSIgcng9IjQiLz48cGF0aCBkPSJtNyA5IDMgM0wyMCA5IiBzdHJva2U9IiNmOWZhZmIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTIxIDEydjZhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJWNmEyIDIgMCAwIDEgMi0yaDE0YTIgMiAwIDAgMSAyIDJ2NiIgc3Ryb2tlPSIjZjlmYWZiIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=">
   <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzBmMTcyYSIgcng9IjQiLz48cGF0aCBkPSJtNyA5IDMgM0wyMCA5IiBzdHJva2U9IiNmOWZhZmIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTIxIDEydjZhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJWNmEyIDIgMCAwIDEgMi0yaDE0YTIgMiAwIDAgMSAyIDJ2NiIgc3Ryb2tlPSIjZjlmYWZiIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=">
   
@@ -35,8 +35,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100%; /* Asegurar que ocupe altura para centrado vertical */
-      padding: 5px 0; /* Un poco de aire */
+      height: 100%;
+      padding: 5px 0;
     }
 
     /* --- HEADER (MES Y AÑO) --- */
@@ -62,7 +62,6 @@
         cursor: pointer;
     }
     
-    /* Ajustes para móviles */
     @media(max-width: 450px) {
         .selector-fecha {
             font-size: 1.2rem;
@@ -73,7 +72,7 @@
     .header-row {
         display:flex;
         align-items: center; 
-        justify-content: space-between; /* Espacio entre selectores y config */
+        justify-content: space-between; 
         gap:10px;
         margin-bottom:20px;
         flex-wrap:wrap;
@@ -199,12 +198,12 @@
     
     #gastos-comparacion { margin-top: 10px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
 
-    /* --- ESTILOS DE LOS NUEVOS MODALES --- */
+    /* --- ESTILOS DE LOS MODALES --- */
     .modal-overlay {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
-        backdrop-filter: blur(8px); /* BLUR EN EL FONDO */
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         z-index: 2000;
         display: flex;
@@ -271,101 +270,75 @@
     @supports (-webkit-touch-callout: none) { html { background: #000000; } body { background: linear-gradient(135deg, #0f172a 0%, #000000 100%); } }
     @media(max-width:900px){ .container{grid-template-columns:1fr;} .config-menu {right: auto;left: 0;} }
 
-    /* --- ESTILOS NEON CHECKBOX (OPTIMIZADO - SIN ANIMACION BORDE) --- */
-    .neon-checkbox {
-      --primary: #00ffaa;
-      --primary-dark: #00cc88;
-      --primary-light: #88ffdd;
-      --size: 30px;
+    /* --- ESTILOS NUEVO CHECKBOX (SVG) --- */
+    .checkbox {
+      display: block;
       position: relative;
-      width: var(--size);
-      height: var(--size);
       cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      margin: 0 auto; 
+      user-select: none;
+      margin: 0 auto;
     }
 
-    .neon-checkbox input { display: none; }
+    .checkbox input {
+      cursor: none;
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      height: 0;
+      width: 0;
+    }
 
-    .neon-checkbox__frame {
+    .checkmark {
+      --sizer: 30px; /* Ajustado para la tabla */
       position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .neon-checkbox__box {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.8);
-      border-radius: 4px;
-      border: 2px solid var(--primary-dark);
-      transition: all 0.4s ease;
-    }
-
-    .neon-checkbox__check-container {
-      position: absolute;
-      inset: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .neon-checkbox__check {
-      width: 80%;
-      height: 80%;
-      fill: none;
-      stroke: var(--primary);
-      stroke-width: 3;
+      stroke-width: 6;
       stroke-linecap: round;
       stroke-linejoin: round;
-      stroke-dasharray: 40;
-      stroke-dashoffset: 40;
-      transform-origin: center;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1;
+      border-radius: 999px;
+    }
+    .checkmark,
+    .checkmark path {
+      transition: all 0.5s linear 0s, stroke 0.15s, fill 0.15s;
     }
 
-    /* EL ARO BRILLANTE (Glow) */
-    .neon-checkbox__glow {
-      position: absolute;
-      inset: -2px;
-      border-radius: 6px;
-      background: var(--primary);
-      opacity: 0;
-      filter: blur(8px);
-      transform: scale(1.2);
-      transition: all 0.4s ease;
+    /* Estado: PAGADO (Verde) */
+    .checkbox input:checked ~ .checkmark {
+      fill: hsl(108, 62%, 55%);
+      stroke: hsl(0, 0%, 100%);
+    }
+    .checkbox input:checked ~ .checkmark path {
+      /* Animación omitida para rendimiento, usando transiciones */
+      stroke-dashoffset: 162.6;
+      stroke-dasharray: 0 162.6 28 134.6;
     }
 
-    /* Hover Effects */
-    .neon-checkbox:hover .neon-checkbox__box {
-      border-color: var(--primary);
-      transform: scale(1.05);
+    /* Estado: NO PAGADO (Rojo/Blanco) */
+    .checkbox input:where(:not(:checked)) ~ .checkmark {
+      fill: hsl(0, 0%, 100%);
+      stroke: hsl(0, 62%, 55%);
+    }
+    .checkbox input:where(:not(:checked)) ~ .checkmark path {
+      stroke-dashoffset: 162.6;
+      stroke-dasharray: 0 200 158 134.6;
     }
 
-    /* Checked State */
-    .neon-checkbox input:checked ~ .neon-checkbox__frame .neon-checkbox__box {
-      border-color: var(--primary);
-      background: rgba(0, 255, 170, 0.1);
+    .sizer {
+      width: var(--sizer);
+      min-width: var(--sizer);
+      max-width: var(--sizer);
+      height: var(--sizer);
+      min-height: var(--sizer);
+      max-height: var(--sizer);
     }
-
-    .neon-checkbox input:checked ~ .neon-checkbox__frame .neon-checkbox__check {
-      stroke-dashoffset: 0;
-      transform: scale(1.1);
-    }
-
-    /* AL HACER CHECK, MOSTRAMOS EL GLOW (ARO BRILLANTE) */
-    .neon-checkbox input:checked ~ .neon-checkbox__frame .neon-checkbox__glow {
-      opacity: 0.2; /* Ajusta este valor si quieres más o menos brillo */
-    }
-
-    /* SE ELIMINARON TODAS LAS ANIMACIONES DE BORDE (keyframes y borders span) */
   </style>
 </head>
 <body>
   
   <!-- --- MODALES (HTML) --- -->
-  
-  <!-- Modal de Información (reemplaza alert) -->
   <div id="info-modal" class="modal-overlay">
     <div class="modal-content">
       <h3 class="modal-title" id="info-modal-title">Información</h3>
@@ -376,7 +349,6 @@
     </div>
   </div>
 
-  <!-- Modal de Confirmación (reemplaza confirm) -->
   <div id="confirm-modal" class="modal-overlay">
     <div class="modal-content">
       <h3 class="modal-title" id="confirm-modal-title">Confirmar</h3>
@@ -388,8 +360,6 @@
     </div>
   </div>
 
-  <!-- --- FIN MODALES --- -->
-
   <div class="install-prompt" id="install-prompt">
     <span>📱</span>
     <div style="flex-grow: 1;"><strong>¡Instala la App!</strong></div>
@@ -398,23 +368,17 @@
   </div>
   
   <div class="main-wrapper">
-    
     <div class="header-row">
       <div class="header-controls">
-        <!-- SELECTOR DE MES -->
         <select id="mes" class="selector-fecha">
             <option>Enero</option><option>Febrero</option><option>Marzo</option>
             <option>Abril</option><option>Mayo</option><option>Junio</option>
             <option>Julio</option><option>Agosto</option><option>Septiembre</option>
             <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
         </select>
-        
-        <!-- SELECTOR DE AÑO (NUEVO) -->
         <select id="anio" class="selector-fecha"></select>
       </div>
-      
       <button class="config-btn" id="config-btn">⚙️</button>
-      
       <div class="config-menu" id="config-menu">
         <h4>Configurar Apariencia</h4>
         <h5>Colores</h5>
@@ -423,10 +387,8 @@
         <div class="color-picker"><label>Gasto Semanal:</label><input type="color" id="color-gasto-semanal"></div>
         <div class="color-picker"><label>Principal:</label><input type="color" id="color-primary"></div>
         <div class="color-picker"><label>Texto:</label><input type="color" id="color-text"></div>
-        
         <h5>Fuentes</h5>
         <div class="range-slider"><label>Gral:</label><input type="range" id="font-size" min="10" max="20" step="1"></div>
-        
         <h5>Datos</h5>
         <button id="descargar-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">Descargar Backup</button>
         <button id="subir-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">Cargar Backup</button>
@@ -499,8 +461,6 @@
         document.getElementById('confirm-modal-message').innerText = message;
         
         const btnYes = document.getElementById('confirm-modal-yes');
-        
-        // Si es borrar, ponemos el botón en rojo
         if (isDelete) {
             btnYes.className = 'btn-modal btn-modal-delete';
             btnYes.innerText = 'Eliminar';
@@ -524,7 +484,6 @@
     };
 
     // --- PWA SETUP ---
-    // Verificar si SW es soportado Y si el protocolo es seguro (http/https/localhost) para evitar errores en iframes/file://
     if ('serviceWorker' in navigator && (window.location.protocol.indexOf('http') === 0)) {
       window.addEventListener('load', () => {
         const swCode = `
@@ -534,14 +493,14 @@
         `;
         const blob = new Blob([swCode], { type: 'application/javascript' });
         navigator.serviceWorker.register(URL.createObjectURL(blob))
-            .catch(err => console.log('SW registration skipped (likely due to environment):', err));
+            .catch(err => console.log('SW registration skipped:', err));
       });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       // DOM Elements
       const mesSelect = document.getElementById('mes');
-      const anioSelect = document.getElementById('anio'); // Nuevo Selector
+      const anioSelect = document.getElementById('anio');
       const agregarBtn = document.getElementById('agregar-gasto');
       const copiarBtn = document.getElementById('copiar-gastos');
       const gastosTable = document.querySelector('#gastos-table tbody');
@@ -561,14 +520,11 @@
       const ctx = document.getElementById('gastosChart').getContext('2d');
       let gastosChart = null;
       
-      // Estado
       let datos = JSON.parse(localStorage.getItem('gastos-mensuales') || '{}');
       const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
       
-      // --- LOGICA AÑOS ---
       const initYears = () => {
           const currentYear = new Date().getFullYear();
-          // Generar rango de años (ej: 5 atrás y 5 adelante)
           for(let y = currentYear - 5; y <= currentYear + 5; y++) {
               const opt = document.createElement('option');
               opt.value = y;
@@ -579,8 +535,6 @@
       };
       initYears();
 
-      // MIGRACIÓN DE DATOS ANTIGUOS (Para no perder lo que ya tenías)
-      // Si las claves son solo "Enero", las pasamos a "Enero-202X"
       const migrarDatos = () => {
           let huboCambios = false;
           const currentYear = new Date().getFullYear();
@@ -588,7 +542,6 @@
           
           Object.keys(datos).forEach(key => {
               if (!key.includes('-')) {
-                  // Es un dato viejo sin año. Lo movemos al año actual.
                   const newKey = `${key}-${currentYear}`;
                   if (!datos[newKey]) {
                       nuevasKeys[newKey] = datos[key];
@@ -606,7 +559,6 @@
       };
       migrarDatos();
 
-      // Obtener la clave actual compuesta (Mes-Año)
       const getPeriodoActual = () => `${mesSelect.value}-${anioSelect.value}`;
 
       let configuracion = {};
@@ -648,7 +600,6 @@
         actualizarComparacion();
       };
 
-      // --- LÓGICA DE COMPARACIÓN MEJORADA (FLECHAS) ---
       function actualizarComparacion() {
         const mesActual = mesSelect.value;
         const anioActual = parseInt(anioSelect.value);
@@ -656,9 +607,9 @@
         
         let mesAnterior, anioAnterior;
         
-        if (idx === 0) { // Si es Enero
-            mesAnterior = meses[11]; // Diciembre
-            anioAnterior = anioActual - 1; // Año anterior
+        if (idx === 0) { 
+            mesAnterior = meses[11];
+            anioAnterior = anioActual - 1;
         } else {
             mesAnterior = meses[idx - 1];
             anioAnterior = anioActual;
@@ -679,9 +630,6 @@
 
         const diferencia = totalActual - totalAnterior;
         
-        // LÓGICA DE COLORES DE FLECHAS PEDIDA
-        // Flecha arriba (Subió gasto) -> Rojo
-        // Flecha abajo (Bajó gasto) -> Verde
         if (diferencia > 0) {
             divComparacion.innerHTML = `
                 <span style="color: #ef4444; display: flex; align-items: center; justify-content: center; gap: 5px;">
@@ -719,25 +667,17 @@
           const tr = document.createElement('tr');
           if (gasto.pagado) tr.classList.add("pagado-row");
           
-          /* --- AQUI SE INSERTA EL CHECKBOX NEON (OPTIMIZADO - SIN ANIMACION BORDE) --- */
-          /* Se eliminó la div "neon-checkbox__borders" */
+          /* --- AQUI SE INSERTA EL NUEVO CHECKBOX SVG --- */
           tr.innerHTML = `
             <td><input type="text" value="${gasto.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
             <td><input type="text" value="${formatNumber(gasto.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" data-index="${index}" oninput="formatearMonedaInput(this)" inputmode="numeric" onfocus="this.select()"></td>
             
             <td>
-              <label class="neon-checkbox">
+              <label class="checkbox">
                 <input type="checkbox" ${gasto.pagado ? 'checked' : ''} onchange="togglePagado(${index})" />
-                <div class="neon-checkbox__frame">
-                  <div class="neon-checkbox__box">
-                    <div class="neon-checkbox__check-container">
-                      <svg viewBox="0 0 24 24" class="neon-checkbox__check">
-                        <path d="M3,12.5l7,7L21,5"></path>
-                      </svg>
-                    </div>
-                    <div class="neon-checkbox__glow"></div>
-                  </div>
-                </div>
+                <svg viewBox="0 0 44 44" class="sizer checkmark">
+                    <path d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758" transform="translate(-2.000000, -2.000000)"></path>
+                </svg>
               </label>
             </td>
 
@@ -782,7 +722,6 @@
         }
       }
 
-      // --- FUNCIONES GLOBALES CON MODALES ---
       window.actualizarNombreGasto = (index, val) => {
         const p = getPeriodoActual();
         datos[p].gastos[index].nombre = val;
@@ -798,13 +737,9 @@
 
       window.togglePagado = (index) => {
         const p = getPeriodoActual();
-        // 1. Alternar estado
         datos[p].gastos[index].pagado = !datos[p].gastos[index].pagado;
-        
-        // 2. Guardar datos
         guardarDatos();
-
-        // 3. Actualizar visualmente SOLO esta fila (sin re-renderizar todo)
+        
         const row = document.querySelector('#gastos-table tbody').children[index];
         if (row) {
             if (datos[p].gastos[index].pagado) {
@@ -813,12 +748,9 @@
                 row.classList.remove('pagado-row');
             }
         }
-        
-        // 4. Actualizar totales (necesario por seguridad)
         actualizarTotales();
       };
 
-      // MODAL CONFIRMACIÓN AL ELIMINAR
       window.eliminarGasto = (index) => {
         showConfirm(
             '¿Estás de acuerdo en eliminar este gasto?',
@@ -829,13 +761,12 @@
                 renderGastos();
             },
             'Eliminar Gasto',
-            true // Esto pone el botón en rojo
+            true 
         );
       };
 
       // --- EVENT LISTENERS ---
       
-      // Cambio de fecha
       const handleDateChange = () => {
           asegurarMes();
           renderInputs();
@@ -886,7 +817,6 @@
         }, "Copiar Gastos");
       });
 
-      // Configuración y Backup
       document.getElementById('config-btn').onclick = (e) => { e.stopPropagation(); document.getElementById('config-menu').classList.toggle('active'); };
       document.addEventListener('click', (e) => { 
         if (!e.target.closest('#config-menu') && !e.target.closest('#config-btn')) document.getElementById('config-menu').classList.remove('active'); 
@@ -905,7 +835,7 @@
          r.onload = (ev) => {
              try {
                  datos = JSON.parse(ev.target.result);
-                 migrarDatos(); // Por si suben un backup viejo
+                 migrarDatos();
                  localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
                  asegurarMes();
                  renderInputs();
@@ -927,7 +857,6 @@
           }, 'Atención', true);
       };
 
-      // Configuración de Estilos
       const applyConfig = () => {
         Object.entries(configuracion).forEach(([k, v]) => {
            const suffix = k.includes('font-size') ? 'px' : '';
@@ -950,7 +879,6 @@
       inputsIngresos.forEach(i => i.addEventListener('input', () => { window.formatearMonedaInput(i); guardarDatos(); }));
       dividirSelect.addEventListener('change', actualizarTotales);
 
-      // INIT
       mesSelect.selectedIndex = new Date().getMonth();
       loadConfig();
       asegurarMes();
