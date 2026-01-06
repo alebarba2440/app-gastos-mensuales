@@ -760,7 +760,7 @@
                     <td colspan="5">
                         <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 5px;">
                             <span>${catInfo.icon} ${catInfo.label}</span>
-                            <span style="font-size: 0.9em; opacity: 0.8;">$${formatNumber(subtotal)}</span>
+                            <span id="group-total-${catId}" style="font-size: 0.9em; opacity: 0.8;">$${formatNumber(subtotal)}</span>
                         </div>
                     </td>
                 `;
@@ -904,12 +904,21 @@
       
       window.actualizarImporteGasto = (index, val) => {
         const p = getPeriodoActual();
-        datos[p].gastos[index].importe = parseFormattedNumber(val);
+        const gasto = datos[p].gastos[index];
+        gasto.importe = parseFormattedNumber(val);
         localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
         actualizarTotales();
-        // Si quieres que el subtotal del grupo se actualice en tiempo real, descomenta:
-        // renderGastos(); 
-        // (Pero puede hacer perder el foco del input, mejor dejarlo solo actualizar totales globales)
+
+        // Actualizar subtotal del grupo específicamente sin redibujar toda la tabla
+        const catId = gasto.categoria || 'varios';
+        const totalGroup = datos[p].gastos
+            .filter(g => (g.categoria || 'varios') === catId)
+            .reduce((sum, g) => sum + (Number(g.importe) || 0), 0);
+            
+        const headerTotal = document.getElementById(`group-total-${catId}`);
+        if (headerTotal) {
+            headerTotal.innerText = '$' + formatNumber(totalGroup);
+        }
       };
 
       window.togglePagado = (index) => {
