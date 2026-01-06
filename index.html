@@ -21,23 +21,40 @@
 
   <style>
     /* --- CONFIGURACIÓN DE COLUMNAS DE LA TABLA --- */
+    /* Nueva Columna Categoria */
     #gastos-table th:nth-child(1), 
-    #gastos-table td:nth-child(1) { width: auto; min-width: 120px; }
-    #gastos-table th:nth-child(2), 
-    #gastos-table td:nth-child(2) { width: 110px; min-width: 110px; }
-    #gastos-table th:nth-child(3), 
-    #gastos-table td:nth-child(3) { width: 60px; min-width: 60px; }
-    #gastos-table th:nth-child(4), 
-    #gastos-table td:nth-child(4) { width: 60px; min-width: 60px; }
+    #gastos-table td:nth-child(1) { width: 45px; min-width: 45px; padding: 0;} /* Cat */
     
-    /* Centrar contenido de la columna de estado para el nuevo checkbox */
-    #gastos-table td:nth-child(3) {
+    #gastos-table th:nth-child(2), 
+    #gastos-table td:nth-child(2) { width: auto; min-width: 100px; } /* Nombre */
+    
+    #gastos-table th:nth-child(3), 
+    #gastos-table td:nth-child(3) { width: 90px; min-width: 90px; } /* Importe */
+    
+    #gastos-table th:nth-child(4), 
+    #gastos-table td:nth-child(4) { width: 50px; min-width: 50px; } /* Check */
+    
+    #gastos-table th:nth-child(5), 
+    #gastos-table td:nth-child(5) { width: 40px; min-width: 40px; } /* Delete */
+    
+    /* Centrar contenido de la columna de estado para el checkbox */
+    #gastos-table td:nth-child(4) {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100%;
       padding: 5px 0;
     }
+
+    /* Select de Categoría (Emoji) */
+    .cat-select {
+        appearance: none; -webkit-appearance: none;
+        background: transparent; border: none;
+        font-size: 1.2rem; text-align: center;
+        width: 100%; cursor: pointer; padding: 0;
+        margin: 0;
+    }
+    .cat-select option { background: #1e293b; color: #fff; }
 
     /* --- HEADER (MES Y AÑO) --- */
     .header-controls {
@@ -72,7 +89,7 @@
     .header-row {
         display:flex;
         align-items: center; 
-        justify-content: center; 
+        justify-content: center;
         gap:10px;
         margin-bottom:20px;
         flex-wrap:wrap;
@@ -311,7 +328,6 @@
       stroke: hsl(0, 0%, 100%);
     }
     .checkbox input:checked ~ .checkmark path {
-      /* Animación omitida para rendimiento, usando transiciones */
       stroke-dashoffset: 162.6;
       stroke-dasharray: 0 162.6 28 134.6;
     }
@@ -405,7 +421,7 @@
           <button id="copiar-gastos" class="btn">📋 Copiar Mes Ant.</button>
         </div>
         <table id="gastos-table">
-          <thead><tr><th>Gasto</th><th>Importe</th><th>Estado</th><th>Eliminar</th></tr></thead>
+          <thead><tr><th>Cat.</th><th>Gasto</th><th>Importe</th><th>Estado</th><th>Eliminar</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -427,13 +443,13 @@
         </div>
         <div class="separador"></div>
         <div class="seccion seccion-division">
-          <div class="division"><label>Dividir en:</label><select id="dividir"><option value="4">4</option><option value="5">5</option></select></div>
+          <div class="division"><label>Dividir en:</label><select id="dividir"><option value="4">4 Semanas</option><option value="5">5 Semanas</option></select></div>
           <div class="valor-display" id="total-por-parte"><div class="valor-label">Gasto Semanal</div><div class="valor-importe">0</div></div>
         </div>
       </div>
 
       <div class="card full-width-card">
-        <h3 style="text-align:center; margin-top:0;">Estadísticas</h3>
+        <h3 style="text-align:center; margin-top:0;">Estadísticas (Por Categoría)</h3>
         <div class="chart-container"><canvas id="gastosChart"></canvas></div>
         <div id="gastos-comparacion" style="text-align:center; margin-top: 15px; font-size: 1rem;"></div>
       </div>
@@ -487,7 +503,7 @@
     if ('serviceWorker' in navigator && (window.location.protocol.indexOf('http') === 0)) {
       window.addEventListener('load', () => {
         const swCode = `
-          const CACHE_NAME = 'gastos-app-v2';
+          const CACHE_NAME = 'gastos-app-v3';
           self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./']))));
           self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
         `;
@@ -523,6 +539,19 @@
       let datos = JSON.parse(localStorage.getItem('gastos-mensuales') || '{}');
       const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
       
+      // Categorías disponibles (Sectorizar)
+      const categorias = [
+        { id: 'varios', icon: '📦', label: 'Varios' },
+        { id: 'casa', icon: '🏠', label: 'Casa' },
+        { id: 'comida', icon: '🍔', label: 'Comida' },
+        { id: 'transporte', icon: '🚗', label: 'Transp.' },
+        { id: 'servicios', icon: '💡', label: 'Servic.' },
+        { id: 'tarjetas', icon: '💳', label: 'Tarjetas' },
+        { id: 'salud', icon: '💊', label: 'Salud' },
+        { id: 'ocio', icon: '🎉', label: 'Ocio' },
+        { id: 'ahorro', icon: '🐷', label: 'Ahorro' }
+      ];
+
       const initYears = () => {
           const currentYear = new Date().getFullYear();
           for(let y = currentYear - 5; y <= currentYear + 5; y++) {
@@ -541,6 +570,7 @@
           const nuevasKeys = {};
           
           Object.keys(datos).forEach(key => {
+              // Migración de claves antiguas
               if (!key.includes('-')) {
                   const newKey = `${key}-${currentYear}`;
                   if (!datos[newKey]) {
@@ -549,6 +579,23 @@
                   }
               } else {
                   nuevasKeys[key] = datos[key];
+              }
+              
+              // Migración de estructura para categorías y semanas
+              if(nuevasKeys[key] || datos[key]) {
+                  const data = nuevasKeys[key] || datos[key];
+                  if(data.gastos) {
+                      data.gastos.forEach(g => {
+                          if(!g.categoria) {
+                              g.categoria = 'varios';
+                              huboCambios = true;
+                          }
+                      });
+                  }
+                  if(!data.semanas) {
+                      data.semanas = "4"; // Default 4 semanas
+                      huboCambios = true;
+                  }
               }
           });
           
@@ -583,7 +630,7 @@
       const asegurarMes = () => {
         const periodo = getPeriodoActual();
         if (!datos[periodo]) {
-          datos[periodo] = { gastos: [], sueldo: 0, aguinaldo: 0, extra: 0 };
+          datos[periodo] = { gastos: [], sueldo: 0, aguinaldo: 0, extra: 0, semanas: "4" };
         }
         localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
       };
@@ -594,9 +641,11 @@
             datos[periodo].sueldo = parseFormattedNumber(inputsIngresos[0].value) || 0;
             datos[periodo].aguinaldo = parseFormattedNumber(inputsIngresos[1].value) || 0;
             datos[periodo].extra = parseFormattedNumber(inputsIngresos[2].value) || 0;
+            // Guardar configuración de semanas
+            datos[periodo].semanas = dividirSelect.value;
             localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
         }
-        updateChart(); 
+        actualizarTotales(); // Importante: Recalcular visualmente
         actualizarComparacion();
       };
 
@@ -651,11 +700,14 @@
         const ingresos = Number(sueldo) + Number(aguinaldo) + Number(extra);
         const totalGastos = gastos.reduce((a, g) => a + (Number(g.importe) || 0), 0);
         const restante = ingresos - totalGastos;
+        
         totalRestanteImporte.textContent = formatNumber(restante);
-        const partes = parseInt(dividirSelect.value);
+        
+        // Usar valor del selector (que ahora se sincroniza con los datos)
+        const partes = parseInt(dividirSelect.value) || 4;
         totalPorParteImporte.textContent = formatNumber(restante / partes);
+        
         updateChart(); 
-        actualizarComparacion();
       }
 
       function renderGastos() {
@@ -667,8 +719,19 @@
           const tr = document.createElement('tr');
           if (gasto.pagado) tr.classList.add("pagado-row");
           
-          /* --- AQUI SE INSERTA EL NUEVO CHECKBOX SVG --- */
+          // Crear opciones de categoría
+          let catOptions = '';
+          categorias.forEach(cat => {
+              const selected = (gasto.categoria || 'varios') === cat.id ? 'selected' : '';
+              catOptions += `<option value="${cat.id}" ${selected}>${cat.icon}</option>`;
+          });
+
           tr.innerHTML = `
+            <td>
+                <select class="cat-select" onchange="actualizarCategoria(${index}, this.value)">
+                    ${catOptions}
+                </select>
+            </td>
             <td><input type="text" value="${gasto.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
             <td><input type="text" value="${formatNumber(gasto.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" data-index="${index}" oninput="formatearMonedaInput(this)" inputmode="numeric" onfocus="this.select()"></td>
             
@@ -694,18 +757,43 @@
         inputsIngresos[0].value = formatNumber(datos[periodo].sueldo || 0);
         inputsIngresos[1].value = formatNumber(datos[periodo].aguinaldo || 0);
         inputsIngresos[2].value = formatNumber(datos[periodo].extra || 0);
+        
+        // Cargar preferencia de semanas guardada
+        if(datos[periodo].semanas) {
+            dividirSelect.value = datos[periodo].semanas;
+        } else {
+            dividirSelect.value = "4";
+        }
       }
 
       function updateChart() {
         const periodo = getPeriodoActual();
         if (!datos[periodo]) return;
         const gastos = datos[periodo].gastos || [];
-        const gastosValidos = gastos.filter(g => g.importe > 0).sort((a, b) => b.importe - a.importe);
         
-        const labels = gastosValidos.map(g => g.nombre);
-        const dataValues = gastosValidos.map(g => g.importe);
-        const backgroundColors = gastosValidos.map((_, i) => `hsla(${(i * 137.5) % 360}, 70%, 60%, 0.7)`);
-        const borderColors = gastosValidos.map((_, i) => `hsla(${(i * 137.5) % 360}, 70%, 40%, 1)`);
+        // Agrupar por categoría
+        const gastosPorCategoria = {};
+        gastos.forEach(g => {
+            const cat = g.categoria || 'varios';
+            const importe = Number(g.importe) || 0;
+            if(importe > 0) {
+                if(!gastosPorCategoria[cat]) gastosPorCategoria[cat] = 0;
+                gastosPorCategoria[cat] += importe;
+            }
+        });
+
+        // Preparar datos para el gráfico
+        // Ordenar de mayor a menor gasto
+        const entries = Object.entries(gastosPorCategoria).sort((a,b) => b[1] - a[1]);
+        
+        const labels = entries.map(([key, val]) => {
+            const catInfo = categorias.find(c => c.id === key) || { icon: '📦', label: 'Varios' };
+            return `${catInfo.icon} ${catInfo.label}`;
+        });
+        const dataValues = entries.map(([_, val]) => val);
+        
+        const backgroundColors = entries.map((_, i) => `hsla(${(i * 137.5) % 360}, 70%, 60%, 0.7)`);
+        const borderColors = entries.map((_, i) => `hsla(${(i * 137.5) % 360}, 70%, 40%, 1)`);
 
         if (gastosChart) {
             gastosChart.data.labels = labels;
@@ -717,7 +805,27 @@
             gastosChart = new Chart(ctx, {
                 type: 'doughnut', 
                 data: { labels, datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderColor: borderColors, borderWidth: 1 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#f9fafb', boxWidth: 10, font: { size: 10 } } } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { position: 'right', labels: { color: '#f9fafb', boxWidth: 10, font: { size: 10 } } },
+                        tooltip: {
+                             callbacks: {
+                                 label: function(context) {
+                                     let label = context.label || '';
+                                     if (label) {
+                                         label += ': ';
+                                     }
+                                     if (context.parsed !== null) {
+                                         label += '$' + formatNumber(context.parsed);
+                                     }
+                                     return label;
+                                 }
+                             }
+                        }
+                    } 
+                }
             });
         }
       }
@@ -726,6 +834,12 @@
         const p = getPeriodoActual();
         datos[p].gastos[index].nombre = val;
         guardarDatos();
+      };
+
+      window.actualizarCategoria = (index, val) => {
+        const p = getPeriodoActual();
+        datos[p].gastos[index].categoria = val;
+        guardarDatos(); // Esto actualizará el gráfico automáticamente
       };
       
       window.actualizarImporteGasto = (index, val) => {
@@ -771,7 +885,7 @@
           asegurarMes();
           renderInputs();
           renderGastos();
-          guardarDatos();
+          actualizarComparacion(); // Actualizar comparación al cambiar mes
       };
       mesSelect.addEventListener('change', handleDateChange);
       anioSelect.addEventListener('change', handleDateChange);
@@ -779,7 +893,8 @@
       agregarBtn.addEventListener('click', () => {
         asegurarMes();
         const p = getPeriodoActual();
-        datos[p].gastos.push({ nombre: 'Nuevo', importe: 0, pagado: false });
+        // Categoria default: varios
+        datos[p].gastos.push({ nombre: 'Nuevo', importe: 0, pagado: false, categoria: 'varios' });
         guardarDatos();
         renderGastos();
       });
@@ -805,7 +920,7 @@
             const actuales = new Set(datos[p].gastos.map(g => g.nombre));
             const nuevos = datos[keyAnterior].gastos
                 .filter(g => g.importe > 0 && !actuales.has(g.nombre))
-                .map(g => ({ ...g, pagado: false }));
+                .map(g => ({ ...g, pagado: false })); // Mantiene la categoría
             
             if(nuevos.length === 0) {
                 showInfo("Todos los gastos ya existen en este mes.");
@@ -876,8 +991,13 @@
           loadConfig();
       };
 
+      // Listener para Inputs de Ingresos: Ahora llama a guardarDatos, que a su vez llama a actualizarTotales
       inputsIngresos.forEach(i => i.addEventListener('input', () => { window.formatearMonedaInput(i); guardarDatos(); }));
-      dividirSelect.addEventListener('change', actualizarTotales);
+      
+      // Listener para el cambio de semanas: Guarda y recalcula
+      dividirSelect.addEventListener('change', () => {
+          guardarDatos();
+      });
 
       mesSelect.selectedIndex = new Date().getMonth();
       loadConfig();
@@ -888,4 +1008,3 @@
   </script>
 </body>
 </html>
-
