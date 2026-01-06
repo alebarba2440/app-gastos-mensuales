@@ -65,6 +65,21 @@
         padding: 8px;
         border-top: 1px solid var(--glass-border);
         border-bottom: 1px solid var(--glass-border);
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.2s;
+    }
+    .group-header:active td {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    .arrow-icon {
+        display: inline-block;
+        transition: transform 0.2s ease;
+        margin-right: 5px;
+        font-size: 0.8em;
+    }
+    .group-collapsed .arrow-icon {
+        transform: rotate(-90deg);
     }
 
     /* --- HEADER (MES Y AÑO) --- */
@@ -550,6 +565,9 @@
       let datos = JSON.parse(localStorage.getItem('gastos-mensuales') || '{}');
       const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
       
+      // Estado de grupos colapsados (se persiste en localStorage)
+      let gruposColapsados = JSON.parse(localStorage.getItem('grupos-colapsados') || '{}');
+
       // Categorías disponibles (Sectorizar)
       const categorias = [
         { id: 'varios', icon: '📦', label: 'Varios' },
@@ -721,6 +739,17 @@
         updateChart(); 
       }
 
+      // Función para alternar estado de colapso de un grupo
+      window.toggleGrupo = (catId) => {
+        if(gruposColapsados[catId]) {
+            delete gruposColapsados[catId];
+        } else {
+            gruposColapsados[catId] = true;
+        }
+        localStorage.setItem('grupos-colapsados', JSON.stringify(gruposColapsados));
+        renderGastos();
+      };
+
       function renderGastos() {
         gastosTable.innerHTML = '';
         const periodo = getPeriodoActual();
@@ -753,53 +782,61 @@
                 // Header del Grupo
                 const catInfo = categorias.find(c => c.id === catId) || { icon: '📂', label: catId };
                 const subtotal = gastosDelGrupo.reduce((acc, item) => acc + (Number(item.importe) || 0), 0);
+                const isCollapsed = gruposColapsados[catId];
+                const arrow = isCollapsed ? '▶' : '▼';
 
                 const trHeader = document.createElement('tr');
-                trHeader.className = 'group-header';
+                trHeader.className = isCollapsed ? 'group-header group-collapsed' : 'group-header';
+                trHeader.onclick = () => toggleGrupo(catId);
+                
                 trHeader.innerHTML = `
                     <td colspan="5">
                         <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 5px;">
-                            <span>${catInfo.icon} ${catInfo.label}</span>
+                            <span style="display:flex; align-items:center;">
+                                <span class="arrow-icon">${arrow}</span> ${catInfo.icon} ${catInfo.label}
+                            </span>
                             <span id="group-total-${catId}" style="font-size: 0.9em; opacity: 0.8;">$${formatNumber(subtotal)}</span>
                         </div>
                     </td>
                 `;
                 gastosTable.appendChild(trHeader);
 
-                // Filas de Gastos
-                gastosDelGrupo.forEach(item => {
-                    const index = item.originalIndex; // Usar índice original para editar/borrar
-                    const tr = document.createElement('tr');
-                    if (item.pagado) tr.classList.add("pagado-row");
+                // Si no está colapsado, mostramos los gastos
+                if (!isCollapsed) {
+                    gastosDelGrupo.forEach(item => {
+                        const index = item.originalIndex; // Usar índice original para editar/borrar
+                        const tr = document.createElement('tr');
+                        if (item.pagado) tr.classList.add("pagado-row");
 
-                    let catOptions = '';
-                    categorias.forEach(cat => {
-                        const selected = (item.categoria || 'varios') === cat.id ? 'selected' : '';
-                        catOptions += `<option value="${cat.id}" ${selected}>${cat.icon}</option>`;
+                        let catOptions = '';
+                        categorias.forEach(cat => {
+                            const selected = (item.categoria || 'varios') === cat.id ? 'selected' : '';
+                            catOptions += `<option value="${cat.id}" ${selected}>${cat.icon}</option>`;
+                        });
+
+                        tr.innerHTML = `
+                            <td>
+                                <select class="cat-select" onchange="actualizarCategoria(${index}, this.value)">
+                                    ${catOptions}
+                                </select>
+                            </td>
+                            <td><input type="text" value="${item.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
+                            <td><input type="text" value="${formatNumber(item.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" data-index="${index}" oninput="formatearMonedaInput(this)" inputmode="numeric" onfocus="this.select()"></td>
+                            
+                            <td>
+                            <label class="checkbox">
+                                <input type="checkbox" ${item.pagado ? 'checked' : ''} onchange="togglePagado(${index})" />
+                                <svg viewBox="0 0 44 44" class="sizer checkmark">
+                                    <path d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758" transform="translate(-2.000000, -2.000000)"></path>
+                                </svg>
+                            </label>
+                            </td>
+
+                            <td><button class="delete-btn" onclick="eliminarGasto(${index})">❌</button></td>
+                        `;
+                        gastosTable.appendChild(tr);
                     });
-
-                    tr.innerHTML = `
-                        <td>
-                            <select class="cat-select" onchange="actualizarCategoria(${index}, this.value)">
-                                ${catOptions}
-                            </select>
-                        </td>
-                        <td><input type="text" value="${item.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
-                        <td><input type="text" value="${formatNumber(item.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" data-index="${index}" oninput="formatearMonedaInput(this)" inputmode="numeric" onfocus="this.select()"></td>
-                        
-                        <td>
-                        <label class="checkbox">
-                            <input type="checkbox" ${item.pagado ? 'checked' : ''} onchange="togglePagado(${index})" />
-                            <svg viewBox="0 0 44 44" class="sizer checkmark">
-                                <path d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758" transform="translate(-2.000000, -2.000000)"></path>
-                            </svg>
-                        </label>
-                        </td>
-
-                        <td><button class="delete-btn" onclick="eliminarGasto(${index})">❌</button></td>
-                    `;
-                    gastosTable.appendChild(tr);
-                });
+                }
             }
         });
         
@@ -958,6 +995,11 @@
         const p = getPeriodoActual();
         // Categoria default: varios
         datos[p].gastos.push({ nombre: 'Nuevo', importe: 0, pagado: false, categoria: 'varios' });
+        // Si la categoría 'varios' estaba colapsada, la abrimos para ver el nuevo gasto
+        if(gruposColapsados['varios']) {
+            delete gruposColapsados['varios'];
+            localStorage.setItem('grupos-colapsados', JSON.stringify(gruposColapsados));
+        }
         guardarDatos();
         renderGastos();
       });
