@@ -56,6 +56,17 @@
     }
     .cat-select option { background: #1e293b; color: #fff; }
 
+    /* ESTILO PARA FILA DE GRUPO */
+    .group-header td {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--primary);
+        font-weight: bold;
+        text-align: left;
+        padding: 8px;
+        border-top: 1px solid var(--glass-border);
+        border-bottom: 1px solid var(--glass-border);
+    }
+
     /* --- HEADER (MES Y AÑO) --- */
     .header-controls {
         display: flex;
@@ -715,39 +726,87 @@
         const periodo = getPeriodoActual();
         if (!datos[periodo] || !Array.isArray(datos[periodo].gastos)) return;
         
+        // 1. Agrupar gastos preservando índice original
+        const grupos = {};
+        categorias.forEach(c => grupos[c.id] = []); // Inicializar grupos
+        if (!grupos['varios']) grupos['varios'] = []; // Asegurar varios
+
         datos[periodo].gastos.forEach((gasto, index) => {
-          const tr = document.createElement('tr');
-          if (gasto.pagado) tr.classList.add("pagado-row");
-          
-          // Crear opciones de categoría
-          let catOptions = '';
-          categorias.forEach(cat => {
-              const selected = (gasto.categoria || 'varios') === cat.id ? 'selected' : '';
-              catOptions += `<option value="${cat.id}" ${selected}>${cat.icon}</option>`;
-          });
-
-          tr.innerHTML = `
-            <td>
-                <select class="cat-select" onchange="actualizarCategoria(${index}, this.value)">
-                    ${catOptions}
-                </select>
-            </td>
-            <td><input type="text" value="${gasto.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
-            <td><input type="text" value="${formatNumber(gasto.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" data-index="${index}" oninput="formatearMonedaInput(this)" inputmode="numeric" onfocus="this.select()"></td>
-            
-            <td>
-              <label class="checkbox">
-                <input type="checkbox" ${gasto.pagado ? 'checked' : ''} onchange="togglePagado(${index})" />
-                <svg viewBox="0 0 44 44" class="sizer checkmark">
-                    <path d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758" transform="translate(-2.000000, -2.000000)"></path>
-                </svg>
-              </label>
-            </td>
-
-            <td><button class="delete-btn" onclick="eliminarGasto(${index})">❌</button></td>
-          `;
-          gastosTable.appendChild(tr);
+            const catId = gasto.categoria || 'varios';
+            if (!grupos[catId]) grupos[catId] = []; // Por si acaso
+            grupos[catId].push({ ...gasto, originalIndex: index });
         });
+
+        // 2. Renderizar por grupos
+        let hayGastos = false;
+        
+        // Usamos la lista de categorias para el orden de visualización
+        const categoriasAImprimir = categorias.map(c => c.id);
+        // Añadir las que falten si existen en datos
+        Object.keys(grupos).forEach(k => { if(!categoriasAImprimir.includes(k)) categoriasAImprimir.push(k); });
+
+        categoriasAImprimir.forEach(catId => {
+            const gastosDelGrupo = grupos[catId];
+            if (gastosDelGrupo && gastosDelGrupo.length > 0) {
+                hayGastos = true;
+                
+                // Header del Grupo
+                const catInfo = categorias.find(c => c.id === catId) || { icon: '📂', label: catId };
+                const subtotal = gastosDelGrupo.reduce((acc, item) => acc + (Number(item.importe) || 0), 0);
+
+                const trHeader = document.createElement('tr');
+                trHeader.className = 'group-header';
+                trHeader.innerHTML = `
+                    <td colspan="5">
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 5px;">
+                            <span>${catInfo.icon} ${catInfo.label}</span>
+                            <span style="font-size: 0.9em; opacity: 0.8;">$${formatNumber(subtotal)}</span>
+                        </div>
+                    </td>
+                `;
+                gastosTable.appendChild(trHeader);
+
+                // Filas de Gastos
+                gastosDelGrupo.forEach(item => {
+                    const index = item.originalIndex; // Usar índice original para editar/borrar
+                    const tr = document.createElement('tr');
+                    if (item.pagado) tr.classList.add("pagado-row");
+
+                    let catOptions = '';
+                    categorias.forEach(cat => {
+                        const selected = (item.categoria || 'varios') === cat.id ? 'selected' : '';
+                        catOptions += `<option value="${cat.id}" ${selected}>${cat.icon}</option>`;
+                    });
+
+                    tr.innerHTML = `
+                        <td>
+                            <select class="cat-select" onchange="actualizarCategoria(${index}, this.value)">
+                                ${catOptions}
+                            </select>
+                        </td>
+                        <td><input type="text" value="${item.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
+                        <td><input type="text" value="${formatNumber(item.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" data-index="${index}" oninput="formatearMonedaInput(this)" inputmode="numeric" onfocus="this.select()"></td>
+                        
+                        <td>
+                        <label class="checkbox">
+                            <input type="checkbox" ${item.pagado ? 'checked' : ''} onchange="togglePagado(${index})" />
+                            <svg viewBox="0 0 44 44" class="sizer checkmark">
+                                <path d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758" transform="translate(-2.000000, -2.000000)"></path>
+                            </svg>
+                        </label>
+                        </td>
+
+                        <td><button class="delete-btn" onclick="eliminarGasto(${index})">❌</button></td>
+                    `;
+                    gastosTable.appendChild(tr);
+                });
+            }
+        });
+        
+        if (!hayGastos) {
+            gastosTable.innerHTML = '<tr><td colspan="5" style="padding:20px; opacity:0.5;">No hay gastos cargados</td></tr>';
+        }
+
         actualizarTotales();
       }
 
@@ -840,6 +899,7 @@
         const p = getPeriodoActual();
         datos[p].gastos[index].categoria = val;
         guardarDatos(); // Esto actualizará el gráfico automáticamente
+        renderGastos(); // Re-renderizar para mover la fila al grupo correcto
       };
       
       window.actualizarImporteGasto = (index, val) => {
@@ -847,22 +907,16 @@
         datos[p].gastos[index].importe = parseFormattedNumber(val);
         localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
         actualizarTotales();
+        // Si quieres que el subtotal del grupo se actualice en tiempo real, descomenta:
+        // renderGastos(); 
+        // (Pero puede hacer perder el foco del input, mejor dejarlo solo actualizar totales globales)
       };
 
       window.togglePagado = (index) => {
         const p = getPeriodoActual();
         datos[p].gastos[index].pagado = !datos[p].gastos[index].pagado;
         guardarDatos();
-        
-        const row = document.querySelector('#gastos-table tbody').children[index];
-        if (row) {
-            if (datos[p].gastos[index].pagado) {
-                row.classList.add('pagado-row');
-            } else {
-                row.classList.remove('pagado-row');
-            }
-        }
-        actualizarTotales();
+        renderGastos(); // Necesario para actualizar estilo de la fila
       };
 
       window.eliminarGasto = (index) => {
