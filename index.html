@@ -737,6 +737,7 @@
         totalPorParteImporte.textContent = formatNumber(restante / partes);
         
         updateChart(); 
+        actualizarComparacion(); // <- LÍNEA CLAVE AGREGADA PARA REACTIVAR ESTADÍSTICA
       }
 
       // Función para alternar estado de colapso de un grupo
