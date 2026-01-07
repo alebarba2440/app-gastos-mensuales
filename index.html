@@ -784,7 +784,10 @@
                 const catInfo = categorias.find(c => c.id === catId) || { icon: '📂', label: catId };
                 const subtotal = gastosDelGrupo.reduce((acc, item) => acc + (Number(item.importe) || 0), 0);
                 const isCollapsed = gruposColapsados[catId];
-                const arrow = isCollapsed ? '▶' : '▼';
+                const arrow = `
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 9l6 6 6-6"/>
+</svg>`
 
                 const trHeader = document.createElement('tr');
                 trHeader.className = isCollapsed ? 'group-header group-collapsed' : 'group-header';
@@ -1114,3 +1117,4 @@
   </script>
 </body>
 </html>
+
