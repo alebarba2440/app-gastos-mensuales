@@ -81,7 +81,18 @@
     .group-collapsed .arrow-icon {
         transform: rotate(-90deg);
     }
+/* 1. Estado por defecto (Abierto): Muestra flecha roja para "Cerrar/Agrupar" */
+.arrow-icon {
+    /* ... propiedades existentes ... */
+    color: var(--danger); /* Se ve rojo */
+    font-weight: bold;    /* Opcional: para que resalte más */
+}
 
+/* 2. Estado Colapsado (Cerrado): Muestra flecha verde para "Expandir" */
+.group-collapsed .arrow-icon {
+    color: var(--success); /* Se ve verde */
+    transform: rotate(-90deg); /* Mantiene tu rotación existente */
+}
     /* --- HEADER (MES Y AÑO) --- */
     .header-controls {
         display: flex;
