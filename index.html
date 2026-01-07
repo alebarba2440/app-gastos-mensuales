@@ -18,10 +18,14 @@
   
   <!-- LIBRERÍA PARA EL GRÁFICO -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * {
-  font-family: 'Montserrat', sans-serif !important;
+body, button, input, select, textarea {
+  font-family: 'Montserrat', sans-serif;
+}
+/* Agrega esto para asegurar que los íconos usen su propia fuente */
+.fa-solid, .fa-brands, .fa-regular {
+    font-family: "Font Awesome 6 Free" !important;
 }
     /* --- CONFIGURACIÓN DE COLUMNAS DE LA TABLA --- */
     /* Nueva Columna Categoria */
@@ -417,7 +421,7 @@
   </div>
 
   <div class="install-prompt" id="install-prompt">
-    <span>📱</span>
+    <span><i class="fa-solid fa-mobile-screen-button"></i></span>
     <div style="flex-grow: 1;"><strong>¡Instala la App!</strong></div>
     <button id="install-button">Instalar</button>
     <button class="close" id="install-close">×</button>
@@ -434,7 +438,9 @@
         </select>
         <select id="anio" class="selector-fecha"></select>
       </div>
-      <button class="config-btn" id="config-btn">⚙️</button>
+      <button class="config-btn" id="config-btn">
+    <i class="fa-solid fa-gear"></i>
+</button>
       <div class="config-menu" id="config-menu">
         <h4>Configurar Apariencia</h4>
         <h5>Colores</h5>
@@ -458,7 +464,9 @@
       <div class="card">
         <div class="gasto-actions">
           <button id="agregar-gasto">+ Gasto</button>
-          <button id="copiar-gastos" class="btn">📋 Copiar Mes Ant.</button>
+          <button id="copiar-gastos" class="btn">
+    <i class="fa-solid fa-clipboard"></i> Copiar Mes Ant.
+</button>
         </div>
         <table id="gastos-table">
           <thead><tr><th>Cat.</th><th>Gasto</th><th>Importe</th><th>Estado</th><th>Eliminar</th></tr></thead>
@@ -584,16 +592,16 @@
 
       // Categorías disponibles (Sectorizar)
       const categorias = [
-        { id: 'varios', icon: '📦', label: 'Varios' },
-        { id: 'casa', icon: '🏠', label: 'Casa' },
-        { id: 'comida', icon: '🍔', label: 'Comida' },
-        { id: 'transporte', icon: '🚗', label: 'Transp.' },
-        { id: 'servicios', icon: '💡', label: 'Servic.' },
-        { id: 'tarjetas', icon: '💳', label: 'Tarjetas' },
-        { id: 'salud', icon: '💊', label: 'Salud' },
-        { id: 'ocio', icon: '🎉', label: 'Ocio' },
-        { id: 'ahorro', icon: '🐷', label: 'Ahorro' }
-      ];
+    { id: 'varios',     icon: '📦', fa: 'fa-box-open',           label: 'Varios' },
+    { id: 'casa',       icon: '🏠', fa: 'fa-house',              label: 'Casa' },
+    { id: 'comida',     icon: '🍔', fa: 'fa-burger',             label: 'Comida' },
+    { id: 'transporte', icon: '🚗', fa: 'fa-car',                label: 'Transp.' },
+    { id: 'servicios',  icon: '💡', fa: 'fa-lightbulb',          label: 'Servic.' },
+    { id: 'tarjetas',   icon: '💳', fa: 'fa-credit-card',        label: 'Tarjetas' },
+    { id: 'salud',      icon: '💊', fa: 'fa-notes-medical',      label: 'Salud' },
+    { id: 'ocio',       icon: '🎉', fa: 'fa-champagne-glasses',  label: 'Ocio' },
+    { id: 'ahorro',     icon: '🐷', fa: 'fa-piggy-bank',         label: 'Ahorro' }
+];
 
       const initYears = () => {
           const currentYear = new Date().getFullYear();
@@ -865,6 +873,7 @@
         actualizarTotales();
       }
 
+      
       function renderInputs() {
         const periodo = getPeriodoActual();
         if (!datos[periodo]) return;
@@ -1131,4 +1140,3 @@
   </script>
 </body>
 </html>
-
