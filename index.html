@@ -20,6 +20,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    * {
+  font-family: 'Montserrat', sans-serif !important;
+}
     /* --- CONFIGURACIÓN DE COLUMNAS DE LA TABLA --- */
     /* Nueva Columna Categoria */
     #gastos-table th:nth-child(1), 
@@ -65,7 +68,7 @@
         padding: 8px;
         border-top: 1px solid var(--glass-border);
         border-bottom: 1px solid var(--glass-border);
-        font-size: 1.2rem;
+        font-size: 1.2rem;  /* <--- Esto agranda la letra */
         cursor: pointer;
         user-select: none;
         transition: background 0.2s;
@@ -82,7 +85,6 @@
     .group-collapsed .arrow-icon {
         transform: rotate(-90deg);
     }
-/* 1. Estado por defecto (Abierto): Muestra flecha roja para "Cerrar/Agrupar" */
 .arrow-icon {
     /* ... propiedades existentes ... */
     color: var(--danger); /* Se ve rojo */
@@ -1129,5 +1131,4 @@
   </script>
 </body>
 </html>
-
 
