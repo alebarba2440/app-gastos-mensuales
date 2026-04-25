@@ -1,335 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="icon" type="image/png" href="icon22.png">
-  <link rel="apple-touch-icon" href="icon22.png">
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"/>
-  <title>Hoja de Gastos</title>
-  
-  <meta name="theme-color" content="#0f172a">
+  <title>x1km+</title>
+  <meta name="theme-color" content="#0a0f1e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Gastos App">
-  
- 
-  <!-- LIBRERÍA PARA EL GRÁFICO -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="apple-mobile-web-app-title" content="x1km+">
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ29hY2ggUnVubmluZyIsInNob3J0X25hbWUiOiJDb2FjaCIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwYTBmMWUiLCJ0aGVtZV9jb2xvciI6IiMwYTBmMWUiLCJzdGFydF91cmwiOiIuIn0=">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-body, button, input, select, textarea {
-  font-family: 'Montserrat', sans-serif;
-}
-/* Agrega esto para asegurar que los íconos usen su propia fuente */
-.fa-solid, .fa-brands, .fa-regular {
-    font-family: "Font Awesome 6 Free" !important;
-}
-    /* --- CONFIGURACIÓN DE COLUMNAS DE LA TABLA --- */
-    /* Nueva Columna Categoria */
-    #gastos-table th:nth-child(1), 
-    #gastos-table td:nth-child(1) { width: 45px; min-width: 45px; padding: 0;} /* Cat */
-    
-    #gastos-table th:nth-child(2), 
-    #gastos-table td:nth-child(2) { width: auto; min-width: 100px; } /* Nombre */
-    
-    #gastos-table th:nth-child(3), 
-    #gastos-table td:nth-child(3) { width: 90px; min-width: 90px; } /* Importe */
-    
-    #gastos-table th:nth-child(4), 
-    #gastos-table td:nth-child(4) { width: 50px; min-width: 50px; } /* Check */
-    
-    #gastos-table th:nth-child(5), 
-    #gastos-table td:nth-child(5) { width: 40px; min-width: 40px; } /* Delete */
-    
-    /* Centrar contenido de la columna de estado para el checkbox */
-    #gastos-table td:nth-child(4) {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      padding: 5px 0;
-    }
-
-    /* Select de Categoría (Emoji) */
-    .cat-select {
-        appearance: none; -webkit-appearance: none;
-        background: transparent; border: none;
-        font-size: 1.2rem; text-align: center;
-        width: 100%; cursor: pointer; padding: 0;
-        margin: 0;
-    }
-    .cat-select option { background: #1e293b; color: #fff; }
-
-    /* ESTILO PARA FILA DE GRUPO */
-    .group-header td {
-        background: rgba(255, 255, 255, 0.1);
-        color:  #d2d2d2;
-        font-weight: bold;
-        text-align: center;
-        
-        padding: 8px;
-        border-top: 1px solid var(--glass-border);
-        border-bottom: 1px solid var(--glass-border);
-        font-size: 1.2rem;  /* <--- Esto agranda la letra */
-        cursor: pointer;
-        user-select: none;
-        transition: background 0.2s;
-    }
-    .group-header:active td {
-        background: rgba(255, 255, 255, 0.2);
-    }
-    .arrow-icon {
-        display: inline-block;
-        transition: transform 0.2s ease;
-        margin-right: 5px;
-        font-size: 0.8em;
-    }
-    .group-collapsed .arrow-icon {
-        transform: rotate(-90deg);
-    }
-.arrow-icon {
-    /* ... propiedades existentes ... */
-    color: var(--danger); /* Se ve rojo */
-    font-weight: bold;    /* Opcional: para que resalte más */
-}
-
-/* 2. Estado Colapsado (Cerrado): Muestra flecha verde para "Expandir" */
-.group-collapsed .arrow-icon {
-    color: var(--success); /* Se ve verde */
-    transform: rotate(-90deg); /* Mantiene tu rotación existente */
-}
-    /* --- HEADER (MES Y AÑO) --- */
-    .header-controls {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .selector-fecha {
-        font-size: 1.5rem;
-        font-weight: bold;
-        padding: 8px 15px;
-        color: var(--text);
-        text-align: center;
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 12px;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        appearance: none;
-        -webkit-appearance: none;
-        cursor: pointer;
-    }
-    
-    @media(max-width: 450px) {
-        .selector-fecha {
-            font-size: 1.2rem;
-            padding: 6px 10px;
-        }
-    }
-
-    .header-row {
-        display:flex;
-        align-items: center; 
-        justify-content: center;
-        gap:10px;
-        margin-bottom:20px;
-        flex-wrap:wrap;
-        position:relative;
-        width: 100%;
-    }
-    
     :root {
-      --glass-bg: rgba(255,255,255,0.08);
-      --glass-border: rgba(255,255,255,0.2);
-      --primary: #3b82f6;
-      --success: #22c55e;
-      --danger: #ef4444;
-      --text: #f9fafb;
-      --ingresos-bg: rgba(59, 130, 246, 0.1);
-      --resumen-bg: rgba(34, 197, 94, 0.1);
-      --division-bg: rgba(239, 68, 68, 0.1);
-      --ingresos-color: #f9fafb;
-      --restante-color: #22c55e;
-      --gasto-semanal-color: #f59e0b;
-      --bg-start: #0f172a;
+      --bg-start: #0a0f1e;
       --bg-end: #000000;
-      --base-font-size: 16px;
-      --valor-label-fs: 0.9rem;
-      --ingreso-importe-fs: 1rem;
-      --restante-importe-fs: 1.5rem;
-      --gasto-semanal-importe-fs: 1.5rem;
+      --glass-bg: rgba(255,255,255,0.07);
+      --glass-border: rgba(255,255,255,0.15);
+      --primary: #f97316;
+      --primary-dim: rgba(249,115,22,0.15);
+      --success: #22c55e;
+      --success-dim: rgba(34,197,94,0.15);
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #fb923c;
+      --base-font: 15px;
+      --card-radius: 18px;
     }
-    * {box-sizing:border-box;transition:all .2s ease;}
-    
-    html { height: 100%; margin: 0; padding: 0; background: #000000; }
-    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; background: #000; }
     body {
-        min-height: 100vh; min-height: 100dvh;
-        overflow: hidden; margin: 0; padding: 0;
-        position: fixed; width: 100%; top: 0; left: 0; right: 0; bottom: 0;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #000000 100%);
-        color: var(--text);
-        font-family: Segoe UI, sans-serif;
-        font-weight: bold;
-        font-size: var(--base-font-size);
-        overscroll-behavior: none;
-        -webkit-overflow-scrolling: touch;
+      min-height: 100vh; min-height: 100dvh;
+      background: linear-gradient(145deg, var(--bg-start) 0%, #111827 60%, var(--bg-end) 100%);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: var(--base-font);
+      font-weight: 600;
+      position: fixed; width: 100%; top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
     }
-
     .main-wrapper {
-        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-        overflow-y: auto; overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: none;
-        background: transparent;
-        padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: none;
+      padding: env(safe-area-inset-top,16px) env(safe-area-inset-right,16px) env(safe-area-inset-bottom,20px) env(safe-area-inset-left,16px);
     }
 
-    .container {
-        display:grid; grid-template-columns:2fr 1fr; gap:20px;
-        max-width:1200px; margin:0 auto; padding-bottom: 20px;
+    /* ---- HEADER ---- */
+    .header-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 18px; flex-wrap: wrap;
     }
-    .full-width-card { grid-column: 1 / -1; }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    /* ---- LOGO ---- */
+    .app-logo {
+      height: 64px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6));
+    }
+    .app-title { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+    .app-title span { color: var(--primary); }
 
-    h1 {text-align:center;margin-bottom:10px;font-size:2rem;}
-    select,input,button{
-      padding:6px 10px;border-radius:8px;
-      border:1px solid var(--glass-border);
-      background:var(--glass-bg);color:var(--text);
-      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-      font-weight:bold; font-size: inherit;
-      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+    /* ---- MARCA DE AGUA (repetida, pequeña) ---- */
+    .watermark-bg {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none; z-index: 0;
+      background-image: url('logo.png');
+      background-repeat: repeat;
+      background-size: 110px 110px;
+      background-position: 0 0;
+      opacity: 0.045;
     }
-    select option {color:#000;}
-    button{cursor:pointer;}
-    
-    .card {
-      background:var(--glass-bg);border:1px solid var(--glass-border);
-      border-radius:16px;
-      -webkit-backdrop-filter:blur(12px);padding:20px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.3);
+    .main-wrapper { position: relative; z-index: 1; }
+    .selector-fecha {
+      font-size: 1rem; font-weight: 700; padding: 7px 12px;
+      color: var(--text); background: var(--glass-bg);
+      border: 1px solid var(--glass-border); border-radius: 10px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      appearance: none; -webkit-appearance: none; cursor: pointer;
     }
-    table {width:100%;border-collapse:collapse;margin-top:10px;font-weight:bold;}
-    th,td { padding:2px 2px; border-bottom:1px solid var(--glass-border); text-align:center; border-right:1px solid var(--glass-border); }
-    th:last-child, td:last-child {border-right:none;}
-    th {background:rgba(255,255,255,0.05);}
-    
-    .gasto-actions { display: flex; gap: 10px; margin-bottom: 10px; }
-    #agregar-gasto { background:linear-gradient(90deg, #0022e0, #00106b);border:none;color:#fff; padding:8px 14px;border-radius:8px; flex-grow: 1; }
-    #copiar-gastos { background:linear-gradient(90deg, #5e0000, #c20000); border: none; color: #fff; padding: 8px 14px; border-radius: 8px; }
-    
-    .btn {padding:6px 10px;border:none;border-radius:6px;color:#fff;font-weight:bold;}
-    .pagado {background:var(--success);}
-    .no-pagado {background:var(--danger);}
-    .delete-btn {background:transparent;color:#e22828;border:none;font-size:1rem;cursor:pointer;}
-    
-    .ingresos-resumen {display: flex;flex-direction: column;gap: 15px;}
-    .seccion {padding: 15px;border-radius: 12px;border: 1px solid var(--glass-border);}
-    .seccion-ingresos {background: var(--ingresos-bg);}
-    .seccion-resumen {background: var(--resumen-bg);}
-    .seccion-division {background: var(--division-bg);}
-    .inputs-ingresos {display: flex;flex-direction: column;gap: 15px;}
-    .input-group {display: flex;flex-direction: column;}
-    .input-group label {margin-bottom: 5px;font-size: var(--valor-label-fs);}
-    .input-group input { width: 100%;padding: 8px 12px; font-size: var(--ingreso-importe-fs); border-radius: 8px;border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.2);color: var(--ingresos-color); -moz-appearance: textfield; }
-    .input-group input::-webkit-outer-spin-button, .input-group input::-webkit-inner-spin-button {-webkit-appearance: none;margin: 0;}
-    .resumen {display: flex;flex-direction: column;gap: 10px;}
-    .division {display: flex;align-items: center;justify-content: space-between;gap: 10px;margin-bottom: 10px;}
-    .valor-display { display: flex;flex-direction: column;align-items: center; text-align: center;padding: 8px;background: rgba(0, 0, 0, 0.2);border-radius: 8px; }
-    .valor-label {font-size: var(--valor-label-fs);margin-bottom: 5px;opacity: 0.9;}
-    #total-restante .valor-importe {color: var(--restante-color); font-size: var(--restante-importe-fs); font-weight: bold;}
-    #total-por-parte .valor-importe {color: var(--gasto-semanal-color); font-size: var(--gasto-semanal-importe-fs); font-weight: bold;}
-    .separador {height: 1px;background: var(--glass-border);margin: 10px 0;}
-    
-    .config-btn { background: transparent;border: 1px solid var(--glass-border);border-radius: 50%; width: 40px;height: 40px;display: flex;align-items: center;justify-content: center; font-size: 1.2rem;cursor: pointer; }
-    .config-menu { position: absolute;top: 100%;right: 0;background: var(--glass-bg); border: 1px solid var(--glass-border);border-radius: 12px;padding: 15px; backdrop-filter: blur(20px);-webkit-backdrop-filter:blur(20px); box-shadow: 0 8px 24px rgba(0,0,0,0.5);z-index: 100;display: none; min-width: 320px;margin-top: 10px; }
-    .config-menu.active {display: block;}
-    .config-menu h4 {margin: 0 0 15px 0; text-align: center;}
-    .config-menu h5 { margin: 15px 0 10px 0; border-bottom: 1px solid var(--glass-border); padding-bottom: 5px; }
-    .color-picker {display: flex;align-items: center;margin-bottom: 12px;gap: 10px;}
-    .range-slider {display: flex;align-items: center;gap: 10px;margin-bottom: 12px;}
-    .range-slider input[type="range"] {flex-grow: 1;}
-    
-    tr.pagado-row { background-color: rgba(34,197,94,0.3); }
+    .header-date { display: flex; gap: 8px; align-items: center; }
 
-    .chart-container { position: relative; height: 300px; width: 100%; display: flex; justify-content: center; align-items: center; }
-    
-    #gastos-comparacion { margin-top: 10px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-
-    /* --- ESTILOS DE LOS MODALES --- */
-    .modal-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        z-index: 2000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
+    /* ---- CONFIG BUTTON ---- */
+    .config-btn {
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      border-radius: 50%; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; cursor: pointer; color: var(--text);
+      flex-shrink: 0;
     }
-    .modal-overlay.active {
-        opacity: 1;
-        visibility: visible;
+    .config-menu {
+      position: absolute; top: calc(env(safe-area-inset-top,16px) + 56px); right: 16px;
+      background: rgba(15,23,42,0.95); border: 1px solid var(--glass-border);
+      border-radius: 16px; padding: 18px; backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px); box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      z-index: 200; display: none; min-width: 300px;
+    }
+    .config-menu.active { display: block; }
+    .config-menu h4 { text-align: center; font-size: 1.1rem; margin-bottom: 14px; color: var(--primary); }
+    .config-menu h5 { font-size: 0.85rem; color: var(--text-muted); border-bottom: 1px solid var(--glass-border); padding-bottom: 6px; margin: 14px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; }
+    .config-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .config-row label { flex: 1; font-size: 0.9rem; }
+    .config-row input[type="color"] { width: 40px; height: 32px; border: 1px solid var(--glass-border); border-radius: 6px; background: none; cursor: pointer; padding: 2px; }
+    .config-row input[type="range"] { flex: 1; }
+    .config-row input[type="text"] {
+      flex: 1; padding: 6px 10px; background: rgba(0,0,0,0.3);
+      border: 1px solid var(--glass-border); border-radius: 8px;
+      color: var(--text); font-size: 0.9rem;
+    }
+    .btn-config-action {
+      width: 100%; margin-bottom: 8px; padding: 10px;
+      border: none; border-radius: 10px; color: #fff;
+      font-weight: 700; cursor: pointer; font-size: 0.9rem;
     }
 
-    .modal-content {
-        background: rgba(30, 41, 59, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        border-radius: 20px;
-        padding: 25px;
-        width: 90%;
-        max-width: 400px;
-        text-align: center;
-        transform: scale(0.9);
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* ---- STATS BAR ---- */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+      margin-bottom: 18px;
     }
-    .modal-overlay.active .modal-content {
-        transform: scale(1);
+    .stat-card {
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius); padding: 12px; text-align: center;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    .stat-card .val { font-size: 1.5rem; font-weight: 800; }
+    .stat-card .lbl { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card.green .val { color: var(--success); }
+    .stat-card.orange .val { color: var(--primary); }
+    .stat-card.red .val { color: var(--danger); }
+
+    /* ---- GRUPOS ---- */
+    .grupos-wrapper { display: flex; flex-direction: column; gap: 14px; }
+
+    .grupo-card {
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius); overflow: hidden;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .grupo-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; cursor: pointer; user-select: none;
+      background: rgba(var(--primary-rgb, 249,115,22), 0.08); border-bottom: 1px solid var(--glass-border);
+      transition: background 0.2s;
+    }
+    .grupo-header:active { background: rgba(var(--primary-rgb, 249,115,22), 0.18); }
+    .grupo-icon { font-size: 1.3rem; }
+    .grupo-nombre { flex: 1; font-size: 1.05rem; font-weight: 800; }
+    .grupo-badge {
+      background: var(--primary); color: #fff;
+      border-radius: 20px; padding: 2px 10px;
+      font-size: 0.8rem; font-weight: 700;
+    }
+    .grupo-badge.pagados { background: var(--success); }
+    .grupo-arrow { font-size: 0.9rem; color: var(--primary); transition: transform 0.25s; }
+    .grupo-card.collapsed .grupo-arrow { transform: rotate(-90deg); }
+
+    .grupo-body { padding: 0 0 6px 0; }
+    .grupo-card.collapsed .grupo-body { display: none; }
+
+    /* ---- ACCIONES DEL GRUPO ---- */
+    .grupo-actions {
+      display: flex; gap: 8px; padding: 10px 12px 4px 12px;
+    }
+    .btn-add-corredor {
+      flex: 1; padding: 8px 12px; border: none; border-radius: 10px;
+      background: var(--primary);
+      color: #fff; font-weight: 700; cursor: pointer; font-size: 0.9rem;
     }
 
-    .modal-title {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-        color: var(--primary);
+    /* ---- TABLA CORREDORES ---- */
+    .corredores-table { width: 100%; border-collapse: collapse; }
+    .corredores-table th {
+      font-size: 0.72rem; color: var(--text-muted); text-align: center;
+      padding: 6px 4px; border-bottom: 1px solid var(--glass-border);
+      text-transform: uppercase; letter-spacing: 0.5px; background: rgba(0,0,0,0.15);
     }
-    .modal-message {
-        margin-bottom: 25px;
-        font-weight: normal;
-        line-height: 1.5;
-        font-size: 1.1rem;
+    .corredores-table td {
+      padding: 4px 4px; border-bottom: 1px solid rgba(255,255,255,0.06);
+      text-align: center; vertical-align: middle;
     }
-    .modal-buttons {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-    }
-    .btn-modal {
-        flex: 1;
-        padding: 12px;
-        border-radius: 10px;
-        font-size: 1rem;
-        border: none;
-        color: white;
-    }
-    .btn-modal-cancel { background: #64748b; }
-    .btn-modal-confirm { background: var(--primary); }
-    .btn-modal-delete { background: var(--danger); }
-    
-    /* PWA */
-    .install-prompt { position: fixed; bottom: 20px; left: 20px; right: 20px; background: var(--primary); color: white; padding: 15px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); display: none; align-items: center; gap: 10px; z-index: 1000; }
-    .install-prompt button { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; }
-    .install-prompt .close { background: transparent; border: none; color: white; font-size: 1.5rem; padding: 0; width: 30px; height: 30px; margin-left: auto; }
-    
-    @supports (-webkit-touch-callout: none) { html { background: #000000; } body { background: linear-gradient(135deg, #0f172a 0%, #000000 100%); } }
-    @media(max-width:900px){ .container{grid-template-columns:1fr;} .config-menu {right: auto;left: 0;} }
+    .corredores-table tr:last-child td { border-bottom: none; }
+    .corredores-table tr.pagado-row { background: rgba(34,197,94,0.12); }
 
-    /* --- ESTILOS NUEVO CHECKBOX (SVG) --- */
+    /* columnas */
+    .col-nombre { text-align: left !important; min-width: 90px; }
+    .col-monto  { width: 80px; }
+    .col-check  { width: 44px; }
+    .col-pdf    { width: 36px; }
+    .col-del    { width: 36px; }
+
+    .nombre-input {
+      background: transparent; border: none; color: var(--text);
+      font-size: 0.95rem; font-weight: 600; width: 100%;
+      padding: 4px 2px; outline: none;
+    }
+    .monto-input {
+      background: transparent; border: none; color: var(--text);
+      font-size: 0.9rem; font-weight: 600; width: 100%;
+      text-align: center; padding: 4px 2px; outline: none;
+    }
+    .monto-input:focus, .nombre-input:focus {
+      background: rgba(255,255,255,0.06); border-radius: 6px;
+    }
+
+    /* ---- CHECKBOX SVG (igual al original) ---- */
     .checkbox {
       display: block;
       position: relative;
@@ -337,7 +218,6 @@ body, button, input, select, textarea {
       user-select: none;
       margin: 0 auto;
     }
-
     .checkbox input {
       cursor: none;
       position: absolute;
@@ -346,9 +226,8 @@ body, button, input, select, textarea {
       height: 0;
       width: 0;
     }
-
     .checkmark {
-      --sizer: 30px; /* Ajustado para la tabla */
+      --sizer: 30px;
       position: relative;
       display: flex;
       align-items: center;
@@ -363,17 +242,15 @@ body, button, input, select, textarea {
     .checkmark path {
       transition: all 0.5s linear 0s, stroke 0.15s, fill 0.15s;
     }
-
     /* Estado: PAGADO (Verde) */
     .checkbox input:checked ~ .checkmark {
-      fill: hsl(108, 62%, 55%);
+      fill: var(--success);
       stroke: hsl(0, 0%, 100%);
     }
     .checkbox input:checked ~ .checkmark path {
       stroke-dashoffset: 162.6;
       stroke-dasharray: 0 162.6 28 134.6;
     }
-
     /* Estado: NO PAGADO (Rojo/Blanco) */
     .checkbox input:where(:not(:checked)) ~ .checkmark {
       fill: hsl(0, 0%, 100%);
@@ -383,7 +260,6 @@ body, button, input, select, textarea {
       stroke-dashoffset: 162.6;
       stroke-dasharray: 0 200 158 134.6;
     }
-
     .sizer {
       width: var(--sizer);
       min-width: var(--sizer);
@@ -392,758 +268,844 @@ body, button, input, select, textarea {
       min-height: var(--sizer);
       max-height: var(--sizer);
     }
+
+    /* ---- BOTONES PDF / DELETE ---- */
+    .btn-pdf {
+      background: transparent; border: none; color: #60a5fa;
+      font-size: 1.1rem; cursor: pointer; padding: 4px 6px;
+      border-radius: 6px; transition: color 0.2s, background 0.2s;
+    }
+    .btn-pdf:active { background: rgba(96,165,250,0.2); }
+    .btn-del {
+      background: transparent; border: none; color: var(--danger);
+      font-size: 1.05rem; cursor: pointer; padding: 4px 6px;
+      border-radius: 6px;
+    }
+    .btn-del:active { background: rgba(239,68,68,0.2); }
+
+    /* ---- BOTÓN AGREGAR GRUPO ---- */
+    .btn-add-grupo {
+      width: 100%; padding: 13px; border: 2px dashed var(--primary);
+      border-radius: var(--card-radius); background: transparent;
+      color: var(--primary); font-weight: 700; font-size: 1rem;
+      cursor: pointer; margin-top: 4px; transition: border-color 0.2s, background 0.2s;
+      opacity: 0.7;
+    }
+    .btn-add-grupo:active { background: var(--primary-dim); opacity: 1; }
+
+    /* ---- FOOTER INFO ---- */
+    .grupo-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 14px 6px 14px; border-top: 1px solid rgba(255,255,255,0.07);
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+    .grupo-total { font-size: 0.95rem; font-weight: 800; color: var(--success); }
+
+    /* ---- MODALES ---- */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px); z-index: 2000;
+      display: flex; justify-content: center; align-items: center;
+      opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-content {
+      background: rgba(20,30,50,0.95); border: 1px solid var(--glass-border);
+      border-radius: 20px; padding: 26px; width: 88%; max-width: 380px;
+      text-align: center; transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+    .modal-title { font-size: 1.3rem; margin-bottom: 10px; color: var(--primary); }
+    .modal-message { margin-bottom: 22px; font-weight: 400; line-height: 1.6; font-size: 1rem; }
+    .modal-buttons { display: flex; gap: 12px; justify-content: center; }
+    .btn-modal { flex: 1; padding: 11px; border-radius: 10px; font-size: 0.95rem; border: none; color: #fff; font-weight: 700; cursor: pointer; }
+    .btn-modal-cancel { background: #475569; }
+    .btn-modal-confirm { background: var(--primary); }
+    .btn-modal-delete { background: var(--danger); }
+
+    /* ---- INPUT MODAL ---- */
+    .input-modal-field {
+      width: 100%; padding: 10px 14px; margin-bottom: 18px;
+      background: rgba(0,0,0,0.35); border: 1px solid var(--glass-border);
+      border-radius: 10px; color: var(--text); font-size: 1rem; font-weight: 600;
+      outline: none;
+    }
+    .input-modal-field:focus { border-color: var(--primary); }
+
+    /* ---- INSTALL PROMPT ---- */
+    .install-prompt {
+      position: fixed; bottom: 20px; left: 14px; right: 14px;
+      background: var(--primary); color: white; padding: 14px 16px;
+      border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      display: none; align-items: center; gap: 10px; z-index: 999;
+    }
+    .install-prompt button { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 7px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+    .install-prompt .close { background: transparent; border: none; color: white; font-size: 1.4rem; padding: 0; width: 28px; height: 28px; margin-left: auto; cursor: pointer; }
+
+    /* Select option dark */
+    select option { background: #1e293b; color: #fff; }
+
+    .fa-solid, .fa-brands, .fa-regular { font-family: "Font Awesome 6 Free" !important; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
   </style>
 </head>
 <body>
-  
-  <!-- --- MODALES (HTML) --- -->
-  <div id="info-modal" class="modal-overlay">
-    <div class="modal-content">
-      <h3 class="modal-title" id="info-modal-title">Información</h3>
-      <p class="modal-message" id="info-modal-message">Mensaje aquí</p>
-      <div class="modal-buttons">
-        <button class="btn-modal btn-modal-confirm" id="info-modal-ok">Aceptar</button>
+
+<!-- MODALES -->
+<div id="info-modal" class="modal-overlay">
+  <div class="modal-content">
+    <h3 class="modal-title" id="info-modal-title">Info</h3>
+    <p class="modal-message" id="info-modal-msg">—</p>
+    <div class="modal-buttons">
+      <button class="btn-modal btn-modal-confirm" id="info-modal-ok">Aceptar</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirm-modal" class="modal-overlay">
+  <div class="modal-content">
+    <h3 class="modal-title" id="confirm-modal-title">Confirmar</h3>
+    <p class="modal-message" id="confirm-modal-msg">¿Estás seguro?</p>
+    <div class="modal-buttons">
+      <button class="btn-modal btn-modal-cancel" id="confirm-modal-no">Cancelar</button>
+      <button class="btn-modal btn-modal-confirm" id="confirm-modal-yes">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div id="input-modal" class="modal-overlay">
+  <div class="modal-content">
+    <h3 class="modal-title" id="input-modal-title">Nuevo Grupo</h3>
+    <input class="input-modal-field" id="input-modal-field" type="text" placeholder="Nombre del grupo..."/>
+    <div class="modal-buttons">
+      <button class="btn-modal btn-modal-cancel" id="input-modal-cancel">Cancelar</button>
+      <button class="btn-modal btn-modal-confirm" id="input-modal-ok">Crear</button>
+    </div>
+  </div>
+</div>
+
+<div class="install-prompt" id="install-prompt">
+  <span><i class="fa-solid fa-mobile-screen-button"></i></span>
+  <div style="flex-grow:1"><strong>¡Instalá la App!</strong></div>
+  <button id="install-button">Instalar</button>
+  <button class="close" id="install-close">×</button>
+</div>
+
+<div class="watermark-bg" id="watermark-bg"></div>
+<div class="main-wrapper">
+  <div class="header-row">
+    <div class="header-left">
+      <img src="logo.png" alt="x1km+" class="app-logo" onerror="this.style.display='none'; document.getElementById('app-title-fallback').style.display='flex';">
+      <span class="app-title" id="app-title-fallback" style="display:none;">x1km<span>+</span></span>
+    </div>
+    <div class="header-date">
+      <select id="mes" class="selector-fecha">
+        <option>Enero</option><option>Febrero</option><option>Marzo</option>
+        <option>Abril</option><option>Mayo</option><option>Junio</option>
+        <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+        <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+      </select>
+      <select id="anio" class="selector-fecha"></select>
+    </div>
+    <button class="config-btn" id="config-btn"><i class="fa-solid fa-gear"></i></button>
+    <div class="config-menu" id="config-menu">
+      <h4>⚙️ Configuración</h4>
+      <h5>Colores</h5>
+      <div class="config-row"><label>Acento principal:</label><input type="color" id="cfg-primary" title="Color principal (naranja, botones, badges)"></div>
+      <div class="config-row"><label>Pagado (verde):</label><input type="color" id="cfg-success" title="Color de check pagado"></div>
+      <div class="config-row"><label>Fondo color 1:</label><input type="color" id="cfg-bg-start" title="Color inicial del fondo"></div>
+      <div class="config-row"><label>Fondo color 2:</label><input type="color" id="cfg-bg-end" title="Color final del fondo"></div>
+      <h5>Tipografía</h5>
+      <div class="config-row">
+        <label>Tamaño: <span id="cfg-font-val" style="color:var(--primary)">15px</span></label>
+        <input type="range" id="cfg-font" min="12" max="20" step="1" value="15" style="flex:1">
       </div>
+      <h5>Datos del Coach</h5>
+      <div class="config-row"><label>Tu nombre:</label><input type="text" id="cfg-coach-name" placeholder="Nombre del coach"></div>
+      <div class="config-row"><label>Monto default $:</label><input type="text" id="cfg-monto-default" placeholder="0" inputmode="numeric"></div>
+      <h5>Backup</h5>
+      <button class="btn-config-action" id="btn-backup-down" style="background:var(--primary)">⬇ Descargar Backup</button>
+      <button class="btn-config-action" id="btn-backup-up" style="background:#475569">⬆ Cargar Backup</button>
+      <input type="file" id="file-backup" accept="application/json" style="display:none">
+      <button class="btn-config-action" id="btn-reset-styles" style="background:#64748b">↺ Restaurar Estilos</button>
+      <button class="btn-config-action" id="btn-limpiar" style="background:var(--danger)">🗑 Limpiar Todo</button>
     </div>
   </div>
 
-  <div id="confirm-modal" class="modal-overlay">
-    <div class="modal-content">
-      <h3 class="modal-title" id="confirm-modal-title">Confirmar</h3>
-      <p class="modal-message" id="confirm-modal-message">¿Estás seguro?</p>
-      <div class="modal-buttons">
-        <button class="btn-modal btn-modal-cancel" id="confirm-modal-cancel">Cancelar</button>
-        <button class="btn-modal btn-modal-confirm" id="confirm-modal-yes">Confirmar</button>
-      </div>
-    </div>
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-card orange"><div class="val" id="stat-total">0</div><div class="lbl">Corredores</div></div>
+    <div class="stat-card green"><div class="val" id="stat-pagados">0</div><div class="lbl">Pagaron</div></div>
+    <div class="stat-card red"><div class="val" id="stat-pendientes">0</div><div class="lbl">Pendientes</div></div>
   </div>
 
-  <div class="install-prompt" id="install-prompt">
-    <span><i class="fa-solid fa-mobile-screen-button"></i></span>
-    <div style="flex-grow: 1;"><strong>¡Instala la App!</strong></div>
-    <button id="install-button">Instalar</button>
-    <button class="close" id="install-close">×</button>
-  </div>
-  
-  <div class="main-wrapper">
-    <div class="header-row">
-      <div class="header-controls">
-        <select id="mes" class="selector-fecha">
-            <option>Enero</option><option>Febrero</option><option>Marzo</option>
-            <option>Abril</option><option>Mayo</option><option>Junio</option>
-            <option>Julio</option><option>Agosto</option><option>Septiembre</option>
-            <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
-        </select>
-        <select id="anio" class="selector-fecha"></select>
-      </div>
-      <button class="config-btn" id="config-btn">
-    <i class="fa-solid fa-gear"></i>
-</button>
-      <div class="config-menu" id="config-menu">
-        <h4>Configurar Apariencia</h4>
-        <h5>Colores</h5>
-        <div class="color-picker"><label>Ingresos:</label><input type="color" id="color-ingresos"></div>
-        <div class="color-picker"><label>Restante:</label><input type="color" id="color-restante"></div>
-        <div class="color-picker"><label>Gasto Semanal:</label><input type="color" id="color-gasto-semanal"></div>
-        <div class="color-picker"><label>Principal:</label><input type="color" id="color-primary"></div>
-        <div class="color-picker"><label>Texto:</label><input type="color" id="color-text"></div>
-        <h5>Fuentes</h5>
-        <div class="range-slider"><label>Gral:</label><input type="range" id="font-size" min="10" max="20" step="1"></div>
-        <h5>Datos</h5>
-        <button id="descargar-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">Descargar Backup</button>
-        <button id="subir-backup" class="btn" style="width:100%; margin-bottom: 10px; background: var(--primary);">Cargar Backup</button>
-        <input type="file" id="cargar-backup" accept="application/json" style="display:none;">
-        <button id="reset-styles" class="btn no-pagado" style="width:100%; margin-bottom: 10px;">Restaurar Estilos</button>
-        <button id="limpiar-datos" class="btn" style="width:100%; background:#ef4444;">Limpiar Todo</button>
-      </div>
-    </div>
-  
-    <div class="container">
-      <div class="card">
-        <div class="gasto-actions">
-          <button id="agregar-gasto">+ Gasto</button>
-          <button id="copiar-gastos" class="btn">
-    <i class="fa-solid fa-clipboard"></i> Copiar Mes Ant.
-</button>
-        </div>
-        <table id="gastos-table">
-          <thead><tr><th>Cat.</th><th>Gasto</th><th>Importe</th><th>Estado</th><th>Eliminar</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      
-      <div class="card ingresos-resumen">
-        <div class="seccion seccion-ingresos">
-          <h3 style="margin-top:0;text-align:center;">Ingresos</h3>
-          <div class="inputs-ingresos">
-            <div class="input-group"><label>Sueldo:</label><input type="text" id="sueldo" placeholder="0" inputmode="numeric"></div>
-            <div class="input-group"><label>SAC:</label><input type="text" id="aguinaldo" placeholder="0" inputmode="numeric"></div>
-            <div class="input-group"><label>Extra:</label><input type="text" id="extra" placeholder="0" inputmode="numeric"></div>
-          </div>
-        </div>
-        <div class="separador"></div>
-        <div class="seccion seccion-resumen">
-          <div class="resumen">
-            <div class="valor-display" id="total-restante"><div class="valor-label">Restante</div><div class="valor-importe">0</div></div>
-          </div>
-        </div>
-        <div class="separador"></div>
-        <div class="seccion seccion-division">
-          <div class="division"><label>Dividir en:</label><select id="dividir"><option value="4">4 Semanas</option><option value="5">5 Semanas</option></select></div>
-          <div class="valor-display" id="total-por-parte"><div class="valor-label">Gasto Semanal</div><div class="valor-importe">0</div></div>
-        </div>
-      </div>
+  <!-- GRUPOS -->
+  <div class="grupos-wrapper" id="grupos-wrapper"></div>
+  <button class="btn-add-grupo" id="btn-add-grupo">+ Agregar Grupo</button>
+</div>
 
-      <div class="card full-width-card">
-        <h3 style="text-align:center; margin-top:0;">Estadísticas (Por Categoría)</h3>
-        <div class="chart-container"><canvas id="gastosChart"></canvas></div>
-        <div id="gastos-comparacion" style="text-align:center; margin-top: 15px; font-size: 1rem;"></div>
-      </div>
-    </div>
-  </div> 
-  
-  <script>
-    // --- SISTEMA DE MODALES ---
-    const modalInfo = document.getElementById('info-modal');
-    const modalConfirm = document.getElementById('confirm-modal');
-    let confirmCallback = null;
+<script>
+// ============================================================
+// ESTADO GLOBAL
+// ============================================================
+const DB_KEY  = 'coachrun-data';
+const CFG_KEY = 'coachrun-config';
 
-    function showInfo(message, title = 'Información') {
-        document.getElementById('info-modal-title').innerText = title;
-        document.getElementById('info-modal-message').innerText = message;
-        modalInfo.classList.add('active');
-    }
+const mesesNombres = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+                      "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
-    document.getElementById('info-modal-ok').onclick = () => {
-        modalInfo.classList.remove('active');
+let datos = {};       // { "Enero-2025": { grupos: [{id, nombre, corredores:[{id,nombre,monto,pagado,fechaPago}]}] } }
+let colapsados = {};  // { grupoId: true }
+let config = {};
+const defaultConfig = {
+  '--primary': '#f97316',
+  '--success': '#22c55e',
+  '--bg-start': '#0a0f1e',
+  '--bg-end': '#000000',
+  '--base-font': 15,
+  'coach-name': '',
+  'monto-default': '0'
+};
+
+// ============================================================
+// UTILS
+// ============================================================
+function uid() { return Math.random().toString(36).slice(2,9); }
+
+function getPeriodo() {
+  const m = document.getElementById('mes').value;
+  const a = document.getElementById('anio').value;
+  return `${m}-${a}`;
+}
+
+function getPeriodoData() {
+  const p = getPeriodo();
+  if (!datos[p]) datos[p] = { grupos: [] };
+  return datos[p];
+}
+
+function guardar() {
+  localStorage.setItem(DB_KEY, JSON.stringify(datos));
+  renderStats();
+}
+
+function formatMonto(n) {
+  if (!n && n !== 0) return '0';
+  return Number(n).toLocaleString('es-AR');
+}
+
+function parseMonto(s) {
+  return parseFloat((s||'0').replace(/\./g,'').replace(',','.')) || 0;
+}
+
+// ============================================================
+// MODALES
+// ============================================================
+let confirmCb = null;
+
+function showInfo(msg, title='Información') {
+  document.getElementById('info-modal-title').innerText = title;
+  document.getElementById('info-modal-msg').innerText = msg;
+  document.getElementById('info-modal').classList.add('active');
+}
+document.getElementById('info-modal-ok').onclick = () => document.getElementById('info-modal').classList.remove('active');
+
+function showConfirm(msg, cb, title='Confirmar', danger=false) {
+  document.getElementById('confirm-modal-title').innerText = title;
+  document.getElementById('confirm-modal-msg').innerText = msg;
+  const btn = document.getElementById('confirm-modal-yes');
+  btn.className = danger ? 'btn-modal btn-modal-delete' : 'btn-modal btn-modal-confirm';
+  btn.innerText = danger ? 'Eliminar' : 'Confirmar';
+  confirmCb = cb;
+  document.getElementById('confirm-modal').classList.add('active');
+}
+document.getElementById('confirm-modal-no').onclick = () => {
+  document.getElementById('confirm-modal').classList.remove('active');
+  confirmCb = null;
+};
+document.getElementById('confirm-modal-yes').onclick = () => {
+  document.getElementById('confirm-modal').classList.remove('active');
+  if (confirmCb) confirmCb();
+};
+
+let inputCb = null;
+function showInput(title, placeholder, cb, defVal='') {
+  document.getElementById('input-modal-title').innerText = title;
+  const field = document.getElementById('input-modal-field');
+  field.placeholder = placeholder;
+  field.value = defVal;
+  inputCb = cb;
+  document.getElementById('input-modal').classList.add('active');
+  setTimeout(() => field.focus(), 350);
+}
+document.getElementById('input-modal-cancel').onclick = () => document.getElementById('input-modal').classList.remove('active');
+document.getElementById('input-modal-ok').onclick = () => {
+  const v = document.getElementById('input-modal-field').value.trim();
+  document.getElementById('input-modal').classList.remove('active');
+  if (v && inputCb) inputCb(v);
+};
+document.getElementById('input-modal-field').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('input-modal-ok').click();
+});
+
+// ============================================================
+// RENDER STATS
+// ============================================================
+function renderStats() {
+  const pd = getPeriodoData();
+  let total = 0, pagados = 0;
+  pd.grupos.forEach(g => {
+    total += g.corredores.length;
+    pagados += g.corredores.filter(c => c.pagado).length;
+  });
+  document.getElementById('stat-total').innerText = total;
+  document.getElementById('stat-pagados').innerText = pagados;
+  document.getElementById('stat-pendientes').innerText = total - pagados;
+}
+
+// ============================================================
+// RENDER PRINCIPAL
+// ============================================================
+function render() {
+  renderStats();
+  const pd = getPeriodoData();
+  const wrap = document.getElementById('grupos-wrapper');
+  wrap.innerHTML = '';
+
+  pd.grupos.forEach((grupo, gi) => {
+    const collapsed = colapsados[grupo.id] || false;
+    const pagados = grupo.corredores.filter(c => c.pagado).length;
+    const total = grupo.corredores.length;
+    const totalRecaudado = grupo.corredores
+      .filter(c => c.pagado)
+      .reduce((s,c) => s + (parseMonto(c.monto)||0), 0);
+
+    const card = document.createElement('div');
+    card.className = 'grupo-card' + (collapsed ? ' collapsed' : '');
+    card.dataset.gid = grupo.id;
+
+    // header
+    const header = document.createElement('div');
+    header.className = 'grupo-header';
+    header.innerHTML = `
+      <span class="grupo-icon">👟</span>
+      <span class="grupo-nombre">${escHtml(grupo.nombre)}</span>
+      <span class="grupo-badge pagados">${pagados}/${total}</span>
+      <i class="fa-solid fa-chevron-down grupo-arrow"></i>
+    `;
+    header.onclick = () => {
+      colapsados[grupo.id] = !collapsed;
+      render();
     };
+    card.appendChild(header);
 
-    function showConfirm(message, callback, title = 'Confirmar', isDelete = false) {
-        document.getElementById('confirm-modal-title').innerText = title;
-        document.getElementById('confirm-modal-message').innerText = message;
-        
-        const btnYes = document.getElementById('confirm-modal-yes');
-        if (isDelete) {
-            btnYes.className = 'btn-modal btn-modal-delete';
-            btnYes.innerText = 'Eliminar';
+    // body
+    const body = document.createElement('div');
+    body.className = 'grupo-body';
+
+    // acciones grupo
+    const acciones = document.createElement('div');
+    acciones.className = 'grupo-actions';
+    const btnAdd = document.createElement('button');
+    btnAdd.className = 'btn-add-corredor';
+    btnAdd.innerHTML = '+ Corredor';
+    btnAdd.onclick = () => agregarCorredor(grupo.id);
+
+    const btnDelGrupo = document.createElement('button');
+    btnDelGrupo.className = 'btn-add-corredor';
+    btnDelGrupo.style.cssText = 'background:var(--danger);flex:0 0 auto;padding:8px 10px;font-size:0.85rem;';
+    btnDelGrupo.innerHTML = '🗑 Grupo';
+    btnDelGrupo.onclick = () => eliminarGrupo(grupo.id);
+
+    acciones.appendChild(btnAdd);
+    acciones.appendChild(btnDelGrupo);
+    body.appendChild(acciones);
+
+    // tabla
+    const table = document.createElement('table');
+    table.className = 'corredores-table';
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th class="col-nombre" style="text-align:left;padding-left:14px">Corredor</th>
+          <th class="col-monto">Monto $</th>
+          <th class="col-check">Pagó</th>
+          <th class="col-pdf">PDF</th>
+          <th class="col-del">🗑</th>
+        </tr>
+      </thead>
+    `;
+    const tbody = document.createElement('tbody');
+
+    grupo.corredores.forEach((c, ci) => {
+      const tr = document.createElement('tr');
+      if (c.pagado) tr.className = 'pagado-row';
+
+      // nombre
+      const tdNombre = document.createElement('td');
+      tdNombre.className = 'col-nombre';
+      tdNombre.style.paddingLeft = '14px';
+      const inputNombre = document.createElement('input');
+      inputNombre.className = 'nombre-input';
+      inputNombre.value = c.nombre;
+      inputNombre.placeholder = 'Nombre...';
+      inputNombre.onchange = () => { c.nombre = inputNombre.value.trim(); guardar(); };
+      tdNombre.appendChild(inputNombre);
+
+      // monto
+      const tdMonto = document.createElement('td');
+      tdMonto.className = 'col-monto';
+      const inputMonto = document.createElement('input');
+      inputMonto.className = 'monto-input';
+      inputMonto.value = c.monto || config['monto-default'] || '0';
+      inputMonto.inputMode = 'numeric';
+      inputMonto.onchange = () => { c.monto = inputMonto.value; guardar(); };
+      tdMonto.appendChild(inputMonto);
+
+      // check
+      const tdCheck = document.createElement('td');
+      tdCheck.className = 'col-check';
+      const label = document.createElement('label');
+      label.className = 'checkbox';
+      label.innerHTML = `
+        <input type="checkbox" ${c.pagado ? 'checked' : ''}>
+        <svg viewBox="0 0 44 44" class="sizer checkmark">
+          <path d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758" transform="translate(-2.000000, -2.000000)"></path>
+        </svg>
+      `;
+      label.querySelector('input').onchange = (e) => {
+        c.pagado = e.target.checked;
+        if (c.pagado) {
+          const now = new Date();
+          c.fechaPago = now.toLocaleDateString('es-AR') + ' ' + now.toLocaleTimeString('es-AR', {hour:'2-digit',minute:'2-digit'});
         } else {
-            btnYes.className = 'btn-modal btn-modal-confirm';
-            btnYes.innerText = 'Confirmar';
+          c.fechaPago = null;
         }
-
-        confirmCallback = callback;
-        modalConfirm.classList.add('active');
-    }
-
-    document.getElementById('confirm-modal-cancel').onclick = () => {
-        modalConfirm.classList.remove('active');
-        confirmCallback = null;
-    };
-
-    document.getElementById('confirm-modal-yes').onclick = () => {
-        modalConfirm.classList.remove('active');
-        if (confirmCallback) confirmCallback();
-    };
-
-    // --- PWA SETUP ---
-    if ('serviceWorker' in navigator && (window.location.protocol.indexOf('http') === 0)) {
-      window.addEventListener('load', () => {
-        const swCode = `
-          const CACHE_NAME = 'gastos-app-v3';
-          self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./']))));
-          self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-        `;
-        const blob = new Blob([swCode], { type: 'application/javascript' });
-        navigator.serviceWorker.register(URL.createObjectURL(blob))
-            .catch(err => console.log('SW registration skipped:', err));
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // DOM Elements
-      const mesSelect = document.getElementById('mes');
-      const anioSelect = document.getElementById('anio');
-      const agregarBtn = document.getElementById('agregar-gasto');
-      const copiarBtn = document.getElementById('copiar-gastos');
-      const gastosTable = document.querySelector('#gastos-table tbody');
-      const inputsIngresos = [document.getElementById('sueldo'), document.getElementById('aguinaldo'), document.getElementById('extra')];
-      const totalRestanteImporte = document.querySelector('#total-restante .valor-importe');
-      const dividirSelect = document.getElementById('dividir');
-      const totalPorParteImporte = document.querySelector('#total-por-parte .valor-importe');
-      const configInputs = {
-        '--ingresos-color': document.getElementById('color-ingresos'),
-        '--restante-color': document.getElementById('color-restante'),
-        '--gasto-semanal-color': document.getElementById('color-gasto-semanal'),
-        '--primary': document.getElementById('color-primary'),
-        '--text': document.getElementById('color-text'),
-        '--base-font-size': document.getElementById('font-size')
+        guardar();
+        render();
       };
-      
-      const ctx = document.getElementById('gastosChart').getContext('2d');
-      let gastosChart = null;
-      
-      let datos = JSON.parse(localStorage.getItem('gastos-mensuales') || '{}');
-      const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-      
-      // Estado de grupos colapsados (se persiste en localStorage)
-      let gruposColapsados = JSON.parse(localStorage.getItem('grupos-colapsados') || '{}');
+      tdCheck.appendChild(label);
 
-      // Categorías disponibles (Sectorizar)
-      const categorias = [
-    { id: 'varios',     icon: '📦', fa: 'fa-box-open',           label: 'Varios' },
-    { id: 'casa',       icon: '🏠', fa: 'fa-house',              label: 'Casa' },
-    { id: 'comida',     icon: '🍔', fa: 'fa-burger',             label: 'Comida' },
-    { id: 'transporte', icon: '🚗', fa: 'fa-car',                label: 'Transp.' },
-    { id: 'servicios',  icon: '💡', fa: 'fa-lightbulb',          label: 'Servic.' },
-    { id: 'tarjetas',   icon: '💳', fa: 'fa-credit-card',        label: 'Tarjetas' },
-    { id: 'salud',      icon: '💊', fa: 'fa-notes-medical',      label: 'Salud' },
-    { id: 'ocio',       icon: '🎉', fa: 'fa-champagne-glasses',  label: 'Ocio' },
-    { id: 'ahorro',     icon: '🐷', fa: 'fa-piggy-bank',         label: 'Ahorro' }
-];
+      // pdf
+      const tdPdf = document.createElement('td');
+      tdPdf.className = 'col-pdf';
+      const btnPdf = document.createElement('button');
+      btnPdf.className = 'btn-pdf';
+      btnPdf.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+      btnPdf.title = 'Generar comprobante PDF';
+      btnPdf.onclick = () => generarPDF(c, grupo.nombre);
+      tdPdf.appendChild(btnPdf);
 
-      const initYears = () => {
-          const currentYear = new Date().getFullYear();
-          for(let y = currentYear - 5; y <= currentYear + 5; y++) {
-              const opt = document.createElement('option');
-              opt.value = y;
-              opt.text = y;
-              if (y === currentYear) opt.selected = true;
-              anioSelect.appendChild(opt);
-          }
-      };
-      initYears();
+      // delete
+      const tdDel = document.createElement('td');
+      tdDel.className = 'col-del';
+      const btnD = document.createElement('button');
+      btnD.className = 'btn-del';
+      btnD.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      btnD.onclick = () => eliminarCorredor(grupo.id, ci);
+      tdDel.appendChild(btnD);
 
-      const migrarDatos = () => {
-          let huboCambios = false;
-          const currentYear = new Date().getFullYear();
-          const nuevasKeys = {};
-          
-          Object.keys(datos).forEach(key => {
-              // Migración de claves antiguas
-              if (!key.includes('-')) {
-                  const newKey = `${key}-${currentYear}`;
-                  if (!datos[newKey]) {
-                      nuevasKeys[newKey] = datos[key];
-                      huboCambios = true;
-                  }
-              } else {
-                  nuevasKeys[key] = datos[key];
-              }
-              
-              // Migración de estructura para categorías y semanas
-              if(nuevasKeys[key] || datos[key]) {
-                  const data = nuevasKeys[key] || datos[key];
-                  if(data.gastos) {
-                      data.gastos.forEach(g => {
-                          if(!g.categoria) {
-                              g.categoria = 'varios';
-                              huboCambios = true;
-                          }
-                      });
-                  }
-                  if(!data.semanas) {
-                      data.semanas = "4"; // Default 4 semanas
-                      huboCambios = true;
-                  }
-              }
-          });
-          
-          if (huboCambios) {
-              datos = nuevasKeys;
-              localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
-          }
-      };
-      migrarDatos();
-
-      const getPeriodoActual = () => `${mesSelect.value}-${anioSelect.value}`;
-
-      let configuracion = {};
-      const defaultConfig = {
-        '--ingresos-color': '#f9fafb', '--restante-color': '#22c55e', '--gasto-semanal-color': '#f59e0b',
-        '--primary': '#3b82f6', '--text': '#f9fafb', '--base-font-size': '16'
-      };
-
-      const formatNumber = (num) => num.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-      const parseFormattedNumber = (text) => parseInt(text.toString().replace(/\./g, '')) || 0;
-
-      window.formatearMonedaInput = (input) => {
-        let value = input.value.replace(/\./g, '');
-        if (!isNaN(value) && value !== '') input.value = formatNumber(parseInt(value));
-        else if (value === '') input.value = '';
-        const index = input.getAttribute('data-index');
-        if (index !== null) window.actualizarImporteGasto(index, input.value);
-      };
-
-      // --- FUNCIONES PRINCIPALES ---
-      
-      const asegurarMes = () => {
-        const periodo = getPeriodoActual();
-        if (!datos[periodo]) {
-          datos[periodo] = { gastos: [], sueldo: 0, aguinaldo: 0, extra: 0, semanas: "4" };
-        }
-        localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
-      };
-
-      const guardarDatos = () => {
-        const periodo = getPeriodoActual();
-        if(datos[periodo]){
-            datos[periodo].sueldo = parseFormattedNumber(inputsIngresos[0].value) || 0;
-            datos[periodo].aguinaldo = parseFormattedNumber(inputsIngresos[1].value) || 0;
-            datos[periodo].extra = parseFormattedNumber(inputsIngresos[2].value) || 0;
-            // Guardar configuración de semanas
-            datos[periodo].semanas = dividirSelect.value;
-            localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
-        }
-        actualizarTotales(); // Importante: Recalcular visualmente
-        actualizarComparacion();
-      };
-
-      function actualizarComparacion() {
-        const mesActual = mesSelect.value;
-        const anioActual = parseInt(anioSelect.value);
-        const idx = meses.indexOf(mesActual);
-        
-        let mesAnterior, anioAnterior;
-        
-        if (idx === 0) { 
-            mesAnterior = meses[11];
-            anioAnterior = anioActual - 1;
-        } else {
-            mesAnterior = meses[idx - 1];
-            anioAnterior = anioActual;
-        }
-
-        const periodoActual = `${mesActual}-${anioActual}`;
-        const periodoAnterior = `${mesAnterior}-${anioAnterior}`;
-
-        const totalActual = (datos[periodoActual]?.gastos || []).reduce((acc, g) => acc + (Number(g.importe) || 0), 0);
-        const totalAnterior = (datos[periodoAnterior]?.gastos || []).reduce((acc, g) => acc + (Number(g.importe) || 0), 0);
-        
-        const divComparacion = document.getElementById('gastos-comparacion');
-        
-        if (!datos[periodoAnterior] || (totalAnterior === 0 && datos[periodoAnterior].gastos.length === 0)) {
-            divComparacion.innerHTML = '<span style="color: rgba(255,255,255,0.5)">Sin datos previos</span>';
-            return;
-        }
-
-        const diferencia = totalActual - totalAnterior;
-        
-        if (diferencia > 0) {
-            divComparacion.innerHTML = `
-                <span style="color: #ef4444; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                    <span style="font-size: 1.2em;">⬆</span> $${formatNumber(diferencia)} más que en ${mesAnterior}
-                </span>`;
-        } else if (diferencia < 0) {
-            divComparacion.innerHTML = `
-                <span style="color: #22c55e; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                    <span style="font-size: 1.2em;">⬇</span> $${formatNumber(Math.abs(diferencia))} menos que en ${mesAnterior}
-                </span>`;
-        } else {
-            divComparacion.innerHTML = '<span style="color: var(--text)">Igual que el mes anterior</span>';
-        }
-      }
-
-      function actualizarTotales() {
-        const periodo = getPeriodoActual();
-        const { sueldo = 0, aguinaldo = 0, extra = 0, gastos = [] } = datos[periodo] || {};
-        const ingresos = Number(sueldo) + Number(aguinaldo) + Number(extra);
-        const totalGastos = gastos.reduce((a, g) => a + (Number(g.importe) || 0), 0);
-        const restante = ingresos - totalGastos;
-        
-        totalRestanteImporte.textContent = formatNumber(restante);
-        
-        // Usar valor del selector (que ahora se sincroniza con los datos)
-        const partes = parseInt(dividirSelect.value) || 4;
-        totalPorParteImporte.textContent = formatNumber(restante / partes);
-        
-        updateChart(); 
-        actualizarComparacion(); // <- LÍNEA CLAVE AGREGADA PARA REACTIVAR ESTADÍSTICA
-      }
-
-      // Función para alternar estado de colapso de un grupo
-      window.toggleGrupo = (catId) => {
-        if(gruposColapsados[catId]) {
-            delete gruposColapsados[catId];
-        } else {
-            gruposColapsados[catId] = true;
-        }
-        localStorage.setItem('grupos-colapsados', JSON.stringify(gruposColapsados));
-        renderGastos();
-      };
-
-      function renderGastos() {
-        gastosTable.innerHTML = '';
-        const periodo = getPeriodoActual();
-        if (!datos[periodo] || !Array.isArray(datos[periodo].gastos)) return;
-        
-        // 1. Agrupar gastos preservando índice original
-        const grupos = {};
-        categorias.forEach(c => grupos[c.id] = []); // Inicializar grupos
-        if (!grupos['varios']) grupos['varios'] = []; // Asegurar varios
-
-        datos[periodo].gastos.forEach((gasto, index) => {
-            const catId = gasto.categoria || 'varios';
-            if (!grupos[catId]) grupos[catId] = []; // Por si acaso
-            grupos[catId].push({ ...gasto, originalIndex: index });
-        });
-
-        // 2. Renderizar por grupos
-        let hayGastos = false;
-        
-        // Usamos la lista de categorias para el orden de visualización
-        const categoriasAImprimir = categorias.map(c => c.id);
-        // Añadir las que falten si existen en datos
-        Object.keys(grupos).forEach(k => { if(!categoriasAImprimir.includes(k)) categoriasAImprimir.push(k); });
-
-        categoriasAImprimir.forEach(catId => {
-            const gastosDelGrupo = grupos[catId];
-            if (gastosDelGrupo && gastosDelGrupo.length > 0) {
-                hayGastos = true;
-                
-                // Header del Grupo
-                const catInfo = categorias.find(c => c.id === catId) || { icon: '📂', label: catId };
-                const subtotal = gastosDelGrupo.reduce((acc, item) => acc + (Number(item.importe) || 0), 0);
-                const isCollapsed = gruposColapsados[catId];
-                const arrow = `
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M6 9l6 6 6-6"/>
-</svg>`
-
-                const trHeader = document.createElement('tr');
-                trHeader.className = isCollapsed ? 'group-header group-collapsed' : 'group-header';
-                trHeader.onclick = () => toggleGrupo(catId);
-                
-                trHeader.innerHTML = `
-                    <td colspan="5">
-                        <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 5px;">
-                            <span style="display:flex; align-items:center;">
-                                <span class="arrow-icon">${arrow}</span> ${catInfo.icon} ${catInfo.label}
-                            </span>
-                            <span id="group-total-${catId}" style="font-size: 0.9em; opacity: 0.8;">$${formatNumber(subtotal)}</span>
-                        </div>
-                    </td>
-                `;
-                gastosTable.appendChild(trHeader);
-
-                // Si no está colapsado, mostramos los gastos
-                if (!isCollapsed) {
-                    gastosDelGrupo.forEach(item => {
-                        const index = item.originalIndex; // Usar índice original para editar/borrar
-                        const tr = document.createElement('tr');
-                        if (item.pagado) tr.classList.add("pagado-row");
-
-                        let catOptions = '';
-                        categorias.forEach(cat => {
-                            const selected = (item.categoria || 'varios') === cat.id ? 'selected' : '';
-                            catOptions += `<option value="${cat.id}" ${selected}>${cat.icon}</option>`;
-                        });
-
-                        tr.innerHTML = `
-                            <td>
-                                <select class="cat-select" onchange="actualizarCategoria(${index}, this.value)">
-                                    ${catOptions}
-                                </select>
-                            </td>
-                            <td><input type="text" value="${item.nombre}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" onchange="actualizarNombreGasto(${index}, this.value)" onfocus="this.select()"></td>
-                            <td><input type="text" value="${formatNumber(item.importe)}" style="background:transparent;border:none;color:inherit;width:100%;text-align:center;font-weight:bold;" data-index="${index}" oninput="formatearMonedaInput(this)" inputmode="numeric" onfocus="this.select()"></td>
-                            
-                            <td>
-                            <label class="checkbox">
-                                <input type="checkbox" ${item.pagado ? 'checked' : ''} onchange="togglePagado(${index})" />
-                                <svg viewBox="0 0 44 44" class="sizer checkmark">
-                                    <path d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758" transform="translate(-2.000000, -2.000000)"></path>
-                                </svg>
-                            </label>
-                            </td>
-
-                            <td><button class="delete-btn" onclick="eliminarGasto(${index})">❌</button></td>
-                        `;
-                        gastosTable.appendChild(tr);
-                    });
-                }
-            }
-        });
-        
-        if (!hayGastos) {
-            gastosTable.innerHTML = '<tr><td colspan="5" style="padding:20px; opacity:0.5;">No hay gastos cargados</td></tr>';
-        }
-
-        actualizarTotales();
-      }
-
-      
-      function renderInputs() {
-        const periodo = getPeriodoActual();
-        if (!datos[periodo]) return;
-        inputsIngresos[0].value = formatNumber(datos[periodo].sueldo || 0);
-        inputsIngresos[1].value = formatNumber(datos[periodo].aguinaldo || 0);
-        inputsIngresos[2].value = formatNumber(datos[periodo].extra || 0);
-        
-        // Cargar preferencia de semanas guardada
-        if(datos[periodo].semanas) {
-            dividirSelect.value = datos[periodo].semanas;
-        } else {
-            dividirSelect.value = "4";
-        }
-      }
-
-      function updateChart() {
-        const periodo = getPeriodoActual();
-        if (!datos[periodo]) return;
-        const gastos = datos[periodo].gastos || [];
-        
-        // Agrupar por categoría
-        const gastosPorCategoria = {};
-        gastos.forEach(g => {
-            const cat = g.categoria || 'varios';
-            const importe = Number(g.importe) || 0;
-            if(importe > 0) {
-                if(!gastosPorCategoria[cat]) gastosPorCategoria[cat] = 0;
-                gastosPorCategoria[cat] += importe;
-            }
-        });
-
-        // Preparar datos para el gráfico
-        // Ordenar de mayor a menor gasto
-        const entries = Object.entries(gastosPorCategoria).sort((a,b) => b[1] - a[1]);
-        
-        const labels = entries.map(([key, val]) => {
-            const catInfo = categorias.find(c => c.id === key) || { icon: '📦', label: 'Varios' };
-            return `${catInfo.icon} ${catInfo.label}`;
-        });
-        const dataValues = entries.map(([_, val]) => val);
-        
-        const backgroundColors = entries.map((_, i) => `hsla(${(i * 137.5) % 360}, 70%, 60%, 0.7)`);
-        const borderColors = entries.map((_, i) => `hsla(${(i * 137.5) % 360}, 70%, 40%, 1)`);
-
-        if (gastosChart) {
-            gastosChart.data.labels = labels;
-            gastosChart.data.datasets[0].data = dataValues;
-            gastosChart.data.datasets[0].backgroundColor = backgroundColors;
-            gastosChart.data.datasets[0].borderColor = borderColors;
-            gastosChart.update();
-        } else {
-            gastosChart = new Chart(ctx, {
-                type: 'doughnut', 
-                data: { labels, datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderColor: borderColors, borderWidth: 1 }] },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { position: 'right', labels: { color: '#f9fafb', boxWidth: 10, font: { size: 10 } } },
-                        tooltip: {
-                             callbacks: {
-                                 label: function(context) {
-                                     let label = context.label || '';
-                                     if (label) {
-                                         label += ': ';
-                                     }
-                                     if (context.parsed !== null) {
-                                         label += '$' + formatNumber(context.parsed);
-                                     }
-                                     return label;
-                                 }
-                             }
-                        }
-                    } 
-                }
-            });
-        }
-      }
-
-      window.actualizarNombreGasto = (index, val) => {
-        const p = getPeriodoActual();
-        datos[p].gastos[index].nombre = val;
-        guardarDatos();
-      };
-
-      window.actualizarCategoria = (index, val) => {
-        const p = getPeriodoActual();
-        datos[p].gastos[index].categoria = val;
-        guardarDatos(); // Esto actualizará el gráfico automáticamente
-        renderGastos(); // Re-renderizar para mover la fila al grupo correcto
-      };
-      
-      window.actualizarImporteGasto = (index, val) => {
-        const p = getPeriodoActual();
-        const gasto = datos[p].gastos[index];
-        gasto.importe = parseFormattedNumber(val);
-        localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
-        actualizarTotales();
-
-        // Actualizar subtotal del grupo específicamente sin redibujar toda la tabla
-        const catId = gasto.categoria || 'varios';
-        const totalGroup = datos[p].gastos
-            .filter(g => (g.categoria || 'varios') === catId)
-            .reduce((sum, g) => sum + (Number(g.importe) || 0), 0);
-            
-        const headerTotal = document.getElementById(`group-total-${catId}`);
-        if (headerTotal) {
-            headerTotal.innerText = '$' + formatNumber(totalGroup);
-        }
-      };
-
-      window.togglePagado = (index) => {
-        const p = getPeriodoActual();
-        datos[p].gastos[index].pagado = !datos[p].gastos[index].pagado;
-        guardarDatos();
-        renderGastos(); // Necesario para actualizar estilo de la fila
-      };
-
-      window.eliminarGasto = (index) => {
-        showConfirm(
-            '¿Estás de acuerdo en eliminar este gasto?',
-            () => {
-                const p = getPeriodoActual();
-                datos[p].gastos.splice(index, 1);
-                guardarDatos();
-                renderGastos();
-            },
-            'Eliminar Gasto',
-            true 
-        );
-      };
-
-      // --- EVENT LISTENERS ---
-      
-      const handleDateChange = () => {
-          asegurarMes();
-          renderInputs();
-          renderGastos();
-          actualizarComparacion(); // Actualizar comparación al cambiar mes
-      };
-      mesSelect.addEventListener('change', handleDateChange);
-      anioSelect.addEventListener('change', handleDateChange);
-
-      agregarBtn.addEventListener('click', () => {
-        asegurarMes();
-        const p = getPeriodoActual();
-        // Categoria default: varios
-        datos[p].gastos.push({ nombre: 'Nuevo', importe: 0, pagado: false, categoria: 'varios' });
-        // Si la categoría 'varios' estaba colapsada, la abrimos para ver el nuevo gasto
-        if(gruposColapsados['varios']) {
-            delete gruposColapsados['varios'];
-            localStorage.setItem('grupos-colapsados', JSON.stringify(gruposColapsados));
-        }
-        guardarDatos();
-        renderGastos();
-      });
-      
-      copiarBtn.addEventListener('click', () => {
-        const mesActual = mesSelect.value;
-        const anioActual = parseInt(anioSelect.value);
-        const idx = meses.indexOf(mesActual);
-        
-        let mesAnterior, anioAnterior;
-        if (idx === 0) { mesAnterior = meses[11]; anioAnterior = anioActual - 1; }
-        else { mesAnterior = meses[idx - 1]; anioAnterior = anioActual; }
-        
-        const keyAnterior = `${mesAnterior}-${anioAnterior}`;
-        
-        if (!datos[keyAnterior] || !datos[keyAnterior].gastos?.length) {
-            showInfo(`No hay datos en ${mesAnterior} ${anioAnterior} para copiar.`);
-            return;
-        }
-
-        showConfirm(`¿Copiar gastos de ${mesAnterior} ${anioAnterior}?`, () => {
-            const p = getPeriodoActual();
-            const actuales = new Set(datos[p].gastos.map(g => g.nombre));
-            const nuevos = datos[keyAnterior].gastos
-                .filter(g => g.importe > 0 && !actuales.has(g.nombre))
-                .map(g => ({ ...g, pagado: false })); // Mantiene la categoría
-            
-            if(nuevos.length === 0) {
-                showInfo("Todos los gastos ya existen en este mes.");
-                return;
-            }
-            datos[p].gastos.push(...nuevos);
-            guardarDatos();
-            renderGastos();
-        }, "Copiar Gastos");
-      });
-
-      document.getElementById('config-btn').onclick = (e) => { e.stopPropagation(); document.getElementById('config-menu').classList.toggle('active'); };
-      document.addEventListener('click', (e) => { 
-        if (!e.target.closest('#config-menu') && !e.target.closest('#config-btn')) document.getElementById('config-menu').classList.remove('active'); 
-      });
-
-      document.getElementById('descargar-backup').onclick = () => {
-        const a = document.createElement('a');
-        a.href = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(datos));
-        a.download = `gastos-backup-${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
-      };
-      
-      document.getElementById('subir-backup').onclick = () => document.getElementById('cargar-backup').click();
-      document.getElementById('cargar-backup').onchange = (e) => {
-         const r = new FileReader();
-         r.onload = (ev) => {
-             try {
-                 datos = JSON.parse(ev.target.result);
-                 migrarDatos();
-                 localStorage.setItem('gastos-mensuales', JSON.stringify(datos));
-                 asegurarMes();
-                 renderInputs();
-                 renderGastos();
-                 showInfo('Backup cargado correctamente');
-             } catch(err) { showInfo('Error al leer el archivo'); }
-         };
-         if(e.target.files[0]) r.readAsText(e.target.files[0]);
-         e.target.value = '';
-      };
-
-      document.getElementById('limpiar-datos').onclick = () => {
-          showConfirm('¿Eliminar TODOS los datos de la app? No se pueden recuperar.', () => {
-              datos = {};
-              localStorage.setItem('gastos-mensuales', JSON.stringify({}));
-              asegurarMes();
-              renderInputs();
-              renderGastos();
-          }, 'Atención', true);
-      };
-
-      const applyConfig = () => {
-        Object.entries(configuracion).forEach(([k, v]) => {
-           const suffix = k.includes('font-size') ? 'px' : '';
-           document.documentElement.style.setProperty(k, v + suffix);
-        });
-      };
-      const loadConfig = () => {
-          configuracion = { ...defaultConfig, ...JSON.parse(localStorage.getItem('app-config') || '{}') };
-          applyConfig();
-          Object.entries(configInputs).forEach(([k, el]) => { if(el) el.value = configuracion[k]; });
-      };
-      Object.entries(configInputs).forEach(([k, el]) => {
-         if(el) el.oninput = () => { configuracion[k] = el.value; applyConfig(); localStorage.setItem('app-config', JSON.stringify(configuracion)); };
-      });
-      document.getElementById('reset-styles').onclick = () => {
-          localStorage.removeItem('app-config');
-          loadConfig();
-      };
-
-      // Listener para Inputs de Ingresos: Ahora llama a guardarDatos, que a su vez llama a actualizarTotales
-      inputsIngresos.forEach(i => i.addEventListener('input', () => { window.formatearMonedaInput(i); guardarDatos(); }));
-      
-      // Listener para el cambio de semanas: Guarda y recalcula
-      dividirSelect.addEventListener('change', () => {
-          guardarDatos();
-      });
-
-      mesSelect.selectedIndex = new Date().getMonth();
-      loadConfig();
-      asegurarMes();
-      renderInputs();
-      renderGastos();
+      tr.append(tdNombre, tdMonto, tdCheck, tdPdf, tdDel);
+      tbody.appendChild(tr);
     });
-  </script>
+
+    table.appendChild(tbody);
+    body.appendChild(table);
+
+    // footer con total recaudado
+    const footer = document.createElement('div');
+    footer.className = 'grupo-footer';
+    footer.innerHTML = `<span>${pagados} de ${total} pagaron</span><span class="grupo-total">$${formatMonto(totalRecaudado)}</span>`;
+    body.appendChild(footer);
+
+    card.appendChild(body);
+    wrap.appendChild(card);
+  });
+}
+
+// ============================================================
+// ACCIONES
+// ============================================================
+function agregarGrupo(nombre) {
+  const pd = getPeriodoData();
+  pd.grupos.push({ id: uid(), nombre, corredores: [] });
+  guardar();
+  render();
+}
+
+function eliminarGrupo(gid) {
+  showConfirm('¿Eliminar este grupo y todos sus corredores?', () => {
+    const pd = getPeriodoData();
+    pd.grupos = pd.grupos.filter(g => g.id !== gid);
+    guardar();
+    render();
+  }, 'Eliminar Grupo', true);
+}
+
+function agregarCorredor(gid) {
+  const pd = getPeriodoData();
+  const grupo = pd.grupos.find(g => g.id === gid);
+  if (!grupo) return;
+  const montoDefault = config['monto-default'] || '0';
+  grupo.corredores.push({ id: uid(), nombre: 'Corredor', monto: montoDefault, pagado: false, fechaPago: null });
+  colapsados[gid] = false;
+  guardar();
+  render();
+}
+
+function eliminarCorredor(gid, ci) {
+  showConfirm('¿Eliminar este corredor?', () => {
+    const pd = getPeriodoData();
+    const grupo = pd.grupos.find(g => g.id === gid);
+    if (!grupo) return;
+    grupo.corredores.splice(ci, 1);
+    guardar();
+    render();
+  }, 'Eliminar Corredor', true);
+}
+
+// ============================================================
+// PDF COMPROBANTE
+// ============================================================
+function generarPDF(corredor, grupoNombre) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a6' });
+
+  const periodo = getPeriodo();
+  const coachName = config['coach-name'] || 'x1km+';
+  const ahora = new Date();
+  const fechaEmision = ahora.toLocaleDateString('es-AR') + ' ' + ahora.toLocaleTimeString('es-AR', {hour:'2-digit',minute:'2-digit'});
+  const monto = corredor.monto || '0';
+
+  // Fondo oscuro total
+  doc.setFillColor(10, 15, 30);
+  doc.rect(0, 0, 105, 148, 'F');
+
+  // Intentar poner logo como marca de agua centrada (gris claro, grande)
+  try {
+    const logoImg = document.querySelector('.app-logo');
+    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+      const canvas = document.createElement('canvas');
+      canvas.width = logoImg.naturalWidth;
+      canvas.height = logoImg.naturalHeight;
+      const ctx2 = canvas.getContext('2d');
+      ctx2.globalAlpha = 0.07;
+      ctx2.drawImage(logoImg, 0, 0);
+      const imgData = canvas.toDataURL('image/png');
+      // centrada, grande, semitransparente
+      const wW = 70, wH = 70;
+      const wX = (105 - wW) / 2;
+      const wY = (148 - wH) / 2;
+      doc.addImage(imgData, 'PNG', wX, wY, wW, wH);
+    }
+  } catch(e) { /* sin logo, no importa */ }
+
+  // Franja superior bicolor
+  doc.setFillColor(30, 10, 5);
+  doc.rect(0, 0, 105, 28, 'F');
+  // Línea acento rojo/naranja
+  doc.setFillColor(185, 50, 20);
+  doc.rect(0, 24, 105, 4, 'F');
+
+  // Logo en encabezado (pequeño, a la izquierda)
+  try {
+    const logoImg = document.querySelector('.app-logo');
+    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+      const canvas = document.createElement('canvas');
+      canvas.width = logoImg.naturalWidth;
+      canvas.height = logoImg.naturalHeight;
+      const ctx2 = canvas.getContext('2d');
+      ctx2.drawImage(logoImg, 0, 0);
+      const imgData = canvas.toDataURL('image/png');
+      doc.addImage(imgData, 'PNG', 5, 3, 18, 18);
+    }
+  } catch(e) {}
+
+  // Título encabezado
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(13);
+  doc.setFont('helvetica', 'bold');
+  doc.text('COMPROBANTE DE PAGO', 58, 11, { align: 'center' });
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(200, 180, 170);
+  doc.text('x1km+ corredores scc', 58, 18, { align: 'center' });
+
+  // --- Cuerpo ---
+  const yStart = 34;
+  const lineH = 14;
+
+  // CORREDOR
+  doc.setFontSize(7.5);
+  doc.setTextColor(120, 140, 160);
+  doc.setFont('helvetica', 'bold');
+  doc.text('CORREDOR', 10, yStart);
+  doc.setTextColor(235, 235, 245);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text(corredor.nombre || '—', 10, yStart + 7);
+
+  // separador
+  doc.setDrawColor(40, 55, 75);
+  doc.setLineWidth(0.3);
+  doc.line(8, yStart + 10, 97, yStart + 10);
+
+  // GRUPO
+  const y2 = yStart + lineH;
+  doc.setFontSize(7.5);
+  doc.setTextColor(120, 140, 160);
+  doc.setFont('helvetica', 'bold');
+  doc.text('GRUPO', 10, y2);
+  doc.setTextColor(235, 235, 245);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.text(grupoNombre || '—', 10, y2 + 7);
+  doc.line(8, y2 + 10, 97, y2 + 10);
+
+  // PERIODO
+  const y3 = y2 + lineH;
+  doc.setFontSize(7.5);
+  doc.setTextColor(120, 140, 160);
+  doc.setFont('helvetica', 'bold');
+  doc.text('PERIODO', 10, y3);
+  doc.setTextColor(235, 235, 245);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.text(periodo, 10, y3 + 7);
+  doc.line(8, y3 + 10, 97, y3 + 10);
+
+  // MONTO — caja destacada verde oscuro
+  const y4 = y3 + lineH + 2;
+  doc.setFillColor(15, 60, 35);
+  doc.roundedRect(8, y4, 89, 22, 4, 4, 'F');
+  doc.setFillColor(34, 197, 94);
+  doc.roundedRect(8, y4, 4, 22, 2, 2, 'F');
+  doc.setFontSize(8);
+  doc.setTextColor(100, 200, 130);
+  doc.setFont('helvetica', 'bold');
+  doc.text('MONTO ABONADO', 52.5, y4 + 8, { align: 'center' });
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18);
+  doc.text('$ ' + monto, 52.5, y4 + 17, { align: 'center' });
+
+  // FECHA DE PAGO
+  const y5 = y4 + 26;
+  doc.setFontSize(7.5);
+  doc.setTextColor(120, 140, 160);
+  doc.setFont('helvetica', 'bold');
+  doc.text('FECHA Y HORA DE PAGO', 10, y5);
+  doc.setTextColor(235, 235, 245);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text(corredor.fechaPago || fechaEmision, 10, y5 + 7);
+  doc.line(8, y5 + 10, 97, y5 + 10);
+
+  // Pie
+  const yFoot = 142;
+  doc.setFontSize(7);
+  doc.setTextColor(70, 90, 110);
+  doc.text('Coach: ' + coachName, 10, yFoot);
+  doc.text('Emitido: ' + fechaEmision, 97, yFoot, { align: 'right' });
+
+  // Borde exterior sutil
+  doc.setDrawColor(60, 80, 100);
+  doc.setLineWidth(0.5);
+  doc.rect(2, 2, 101, 144);
+
+  const nombreArchivo = `pago_${(corredor.nombre||'corredor').replace(/\s/g,'_')}_${periodo.replace(/\s/g,'_')}.pdf`;
+  doc.save(nombreArchivo);
+}
+
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+const cfgInputs = {
+  '--primary':    { el: () => document.getElementById('cfg-primary'),   css: true },
+  '--success':    { el: () => document.getElementById('cfg-success'),   css: true },
+  '--bg-start':   { el: () => document.getElementById('cfg-bg-start'),  css: true },
+  '--base-font':  { el: () => document.getElementById('cfg-font'),       css: false, suffix: 'px', varName: '--base-font' },
+  'coach-name':   { el: () => document.getElementById('cfg-coach-name'), css: false },
+  'monto-default':{ el: () => document.getElementById('cfg-monto-default'), css: false },
+};
+
+function applyConfig() {
+  const bgStart = config['--bg-start'] || '#0a0f1e';
+  const bgEnd   = config['--bg-end']   || '#000000';
+  document.documentElement.style.setProperty('--bg-start', bgStart);
+  document.documentElement.style.setProperty('--bg-end', bgEnd);
+  document.body.style.background = `linear-gradient(145deg, ${bgStart} 0%, ${bgEnd} 100%)`;
+
+  const primary = config['--primary'] || '#f97316';
+  // Convertir hex a rgb para usar en rgba()
+  const pr = parseInt(primary.slice(1,3),16);
+  const pg = parseInt(primary.slice(3,5),16);
+  const pb = parseInt(primary.slice(5,7),16);
+  document.documentElement.style.setProperty('--primary', primary);
+  document.documentElement.style.setProperty('--primary-rgb', `${pr},${pg},${pb}`);
+  document.documentElement.style.setProperty('--primary-dim', `rgba(${pr},${pg},${pb},0.15)`);
+
+  const success = config['--success'] || '#22c55e';
+  document.documentElement.style.setProperty('--success', success);
+
+  const fontSize = config['--base-font'] || 15;
+  document.documentElement.style.setProperty('--base-font', fontSize + 'px');
+  document.body.style.fontSize = fontSize + 'px';
+}
+function loadConfig() {
+  config = { ...defaultConfig, ...JSON.parse(localStorage.getItem(CFG_KEY) || '{}') };
+  applyConfig();
+  const fontVal = config['--base-font'] || 15;
+  const fontEl = document.getElementById('cfg-font');
+  if (fontEl) { fontEl.value = fontVal; }
+  const fontValEl = document.getElementById('cfg-font-val');
+  if (fontValEl) fontValEl.innerText = fontVal + 'px';
+  const coachEl = document.getElementById('cfg-coach-name');
+  if (coachEl) coachEl.value = config['coach-name'] || '';
+  const montoEl = document.getElementById('cfg-monto-default');
+  if (montoEl) montoEl.value = config['monto-default'] || '0';
+  const colorMap = {
+    '--primary':  'cfg-primary',
+    '--success':  'cfg-success',
+    '--bg-start': 'cfg-bg-start',
+    '--bg-end':   'cfg-bg-end'
+  };
+  Object.entries(colorMap).forEach(([k, id]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = config[k] || defaultConfig[k];
+  });
+}
+function saveConfig() { localStorage.setItem(CFG_KEY, JSON.stringify(config)); applyConfig(); }
+
+function escHtml(str) {
+  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Años en select
+  const anioSel = document.getElementById('anio');
+  const hoy = new Date();
+  for (let y = hoy.getFullYear() - 2; y <= hoy.getFullYear() + 2; y++) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.text = y;
+    if (y === hoy.getFullYear()) opt.selected = true;
+    anioSel.appendChild(opt);
+  }
+  document.getElementById('mes').selectedIndex = hoy.getMonth();
+
+  // Cargar datos
+  datos = JSON.parse(localStorage.getItem(DB_KEY) || '{}');
+
+  // Cambios de fecha
+  document.getElementById('mes').addEventListener('change', () => { getPeriodoData(); render(); });
+  document.getElementById('anio').addEventListener('change', () => { getPeriodoData(); render(); });
+
+  // Config
+  loadConfig();
+
+  // Listeners config
+  document.getElementById('cfg-primary').oninput = e => { config['--primary'] = e.target.value; saveConfig(); };
+  document.getElementById('cfg-success').oninput  = e => { config['--success'] = e.target.value; saveConfig(); };
+  document.getElementById('cfg-bg-start').oninput = e => { config['--bg-start'] = e.target.value; saveConfig(); };
+  document.getElementById('cfg-bg-end').oninput   = e => { config['--bg-end'] = e.target.value; saveConfig(); };
+  document.getElementById('cfg-font').oninput = e => {
+    config['--base-font'] = parseInt(e.target.value);
+    document.getElementById('cfg-font-val').innerText = e.target.value + 'px';
+    saveConfig();
+  };
+  document.getElementById('cfg-coach-name').oninput = e => { config['coach-name'] = e.target.value; saveConfig(); };
+  document.getElementById('cfg-monto-default').oninput = e => { config['monto-default'] = e.target.value; saveConfig(); };
+
+  // Config menu toggle
+  document.getElementById('config-btn').onclick = e => {
+    e.stopPropagation();
+    document.getElementById('config-menu').classList.toggle('active');
+  };
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#config-menu') && !e.target.closest('#config-btn')) {
+      document.getElementById('config-menu').classList.remove('active');
+    }
+  });
+
+  // Backup
+  document.getElementById('btn-backup-down').onclick = () => {
+    const a = document.createElement('a');
+    a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(datos));
+    a.download = `coachrun-backup-${hoy.toISOString().slice(0,10)}.json`;
+    a.click();
+  };
+  document.getElementById('btn-backup-up').onclick = () => document.getElementById('file-backup').click();
+  document.getElementById('file-backup').onchange = e => {
+    const r = new FileReader();
+    r.onload = ev => {
+      try {
+        datos = JSON.parse(ev.target.result);
+        localStorage.setItem(DB_KEY, JSON.stringify(datos));
+        render();
+        showInfo('Backup cargado correctamente ✔');
+      } catch { showInfo('Error al leer el archivo'); }
+    };
+    if (e.target.files[0]) r.readAsText(e.target.files[0]);
+    e.target.value = '';
+  };
+
+  document.getElementById('btn-reset-styles').onclick = () => {
+    localStorage.removeItem(CFG_KEY);
+    loadConfig();
+    showInfo('Estilos restaurados');
+  };
+
+  document.getElementById('btn-limpiar').onclick = () => {
+    showConfirm('¿Eliminar TODOS los datos? No se puede recuperar.', () => {
+      datos = {};
+      localStorage.setItem(DB_KEY, JSON.stringify({}));
+      render();
+    }, 'Atención', true);
+  };
+
+  // Agregar grupo
+  document.getElementById('btn-add-grupo').onclick = () => {
+    showInput('Nuevo Grupo', 'Ej: Grupo A, Mañana, etc.', nombre => {
+      agregarGrupo(nombre);
+    });
+  };
+
+  // PWA install
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault(); deferredPrompt = e;
+    document.getElementById('install-prompt').style.display = 'flex';
+  });
+  document.getElementById('install-button').onclick = () => {
+    if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
+    document.getElementById('install-prompt').style.display = 'none';
+  };
+  document.getElementById('install-close').onclick = () => {
+    document.getElementById('install-prompt').style.display = 'none';
+  };
+
+  // SW
+  if ('serviceWorker' in navigator && window.location.protocol.indexOf('http') === 0) {
+    const swCode = `
+      const CACHE='coachrun-v1';
+      self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./']))));
+      self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+    `;
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+  }
+
+  getPeriodoData();
+  render();
+});
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
