@@ -1103,11 +1103,35 @@ body, button, input, select, textarea {
         if (!e.target.closest('#config-menu') && !e.target.closest('#config-btn')) document.getElementById('config-menu').classList.remove('active'); 
       });
 
-      document.getElementById('descargar-backup').onclick = () => {
+      document.getElementById('descargar-backup').onclick = async () => {
+        const filename = `gastos-backup-${new Date().toISOString().slice(0,10)}.json`;
+        const jsonStr = JSON.stringify(datos, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+
+        // En iPhone con la app instalada (modo standalone), la única forma confiable
+        // de "guardar" un archivo es a través de la hoja de compartir nativa.
+        if (navigator.canShare) {
+          try {
+            const file = new File([blob], filename, { type: 'application/json' });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({ files: [file], title: 'Backup de Gastos' });
+              return;
+            }
+          } catch (err) {
+            if (err.name === 'AbortError') return; // El usuario canceló, no hacer nada más
+            // Si falla el share por otro motivo, seguimos con el método de descarga normal
+          }
+        }
+
+        // Fallback: descarga directa (funciona en PC y Android, y en Safari fuera de modo app)
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(datos));
-        a.download = `gastos-backup-${new Date().toISOString().slice(0,10)}.json`;
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
       };
       
       document.getElementById('subir-backup').onclick = () => document.getElementById('cargar-backup').click();
